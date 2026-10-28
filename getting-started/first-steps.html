@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Первая программа — JavaDocs 21</title>
+<meta name="description" content="Hello World на Java: компиляция javac, запуск java, однофайловый режим, jshell, структура метода main, preview-возможность instance main из JDK 21.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link current" aria-current="page" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Начало работы<span class="sep">/</span>Первая программа</nav>
+    <h1>Первая программа</h1>
+    <p class="subtitle">Hello World: от исходного кода до запуска</p>
+    <h2>Пишем Hello World</h2>
+<p>Создайте файл <code>Hello.java</code>. Имя файла <strong>обязано</strong> совпадать с именем публичного класса:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Hello</span> {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> <span class="fn">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Привет, Java 21!&quot;</span>);
+    }
+}</code></pre></div>
+<h2>Компилируем и запускаем</h2>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="cm"># 1. Компиляция: javac создаёт файл байткода Hello.class</span>
+$ <span class="fn">javac</span> Hello.java
+
+<span class="cm"># 2. Запуск: java исполняет байткод на JVM (без расширения .class!)</span>
+$ <span class="fn">java</span> Hello
+Привет, Java 21!</code></pre></div>
+<figure class="img"><img src="../assets/images/jvm-flow.png" alt="Схема компиляции и выполнения Java-программы" loading="lazy"><figcaption>Рисунок 1. Путь программы: исходный код → <code>javac</code> → байткод → JVM (загрузчик, интерпретатор/JIT) → результат</figcaption></figure>
+<h3>Что происходит под капотом</h3>
+<ol><li><code>javac</code> проверяет синтаксис и типы, генерирует <strong>байткод</strong> — <code>Hello.class</code>.</li><li><code>java</code> запускает JVM; <strong>загрузчик классов</strong> (ClassLoader) читает <code>.class</code> в память.</li><li><strong>Верификатор</strong> проверяет байткод на безопасность.</li><li><strong>Интерпретатор</strong> начинает построчное исполнение; «горячие» участки кода <strong>JIT-компилятор</strong> (C2) переводит в машинный код на лету.</li><li><strong>Сборщик мусора</strong> (GC) автоматически освобождает память ненужных объектов.</li></ol>
+<h2>Однофайловый режим (с JDK 11)</h2>
+<p>Для небольших скриптов компиляцию можно пропустить — <code>java</code> сам скомпилирует файл в памяти:</p>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code>$ <span class="fn">java</span> Hello.java
+Привет, Java 21!</code></pre></div>
+<h2>REPL: jshell</h2>
+<p><code>jshell</code> — интерактивная консоль Java (появилась в JDK 9). Идеальна, чтобы попробовать API без создания файлов:</p>
+<div class="code-block" data-lang="console"><span class="code-lang">console</span><pre><code>$ <span class="fn">jshell</span>
+<span class="fn">jshell</span>&gt; var langs = java.util.List.of(<span class="st">&quot;Java&quot;</span>, <span class="st">&quot;Kotlin&quot;</span>, <span class="st">&quot;Scala&quot;</span>)
+<span class="fn">langs</span> ==&gt; [Java, Kotlin, Scala]
+
+<span class="fn">jshell</span>&gt; langs.stream().map(String::toUpperCase).toList()
+$2 ==&gt; [JAVA, KOTLIN, SCALA]
+
+<span class="fn">jshell</span>&gt; /exit</code></pre></div>
+<figure class="img"><img src="../assets/images/screenshots/terminal-hello.png" alt="Терминал: компиляция и запуск Hello.java" loading="lazy"><figcaption>Рисунок 2. Сессия в терминале: <code>javac</code>, <code>java</code>, <code>jshell</code></figcaption></figure>
+<h2>Разбор метода main</h2>
+<div class="table-wrap"><table><thead><tr><th>Элемент</th><th>Значение</th></tr></thead><tbody><tr><td><code>public</code></td><td>Метод доступен извне — JVM вызывает его как точку входа</td></tr><tr><td><code>static</code></td><td>Метод принадлежит классу, а не объекту: экземпляр создавать не нужно</td></tr><tr><td><code>void</code></td><td>Ничего не возвращает</td></tr><tr><td><code>main</code></td><td>Зарезервированное имя точки входа (можно изменить при запуске: <code>java -cp out MyMainClass</code>)</td></tr><tr><td><code>String[] args</code></td><td>Аргументы командной строки: <code>java Hello раз два</code> → <code>args = [&quot;раз&quot;, &quot;два&quot;]</code></td></tr></tbody></table></div>
+<h2>Preview в JDK 21: ещё короче</h2>
+<p>JEP 445 (preview) разрешает писать учебные программы вообще без объявления класса и <code>static</code>:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Файл HelloPreview.java — preview-возможность JDK 21</span>
+<span class="kw">void</span> <span class="fn">main</span>() {
+    <span class="ty">IO</span>.<span class="fn">println</span>(<span class="st">&quot;Привет из будущего Java!&quot;</span>);
+}</code></pre></div>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code>$ <span class="fn">javac</span> <span class="nu">--release</span> 21 <span class="nu">--enable-preview</span> HelloPreview.java
+$ <span class="fn">java</span> <span class="nu">--enable-preview</span> HelloPreview
+Привет из будущего Java!</code></pre></div>
+<div class="box warn"><div class="box-title">⚠️ Внимание</div>Preview-возможности нельзя использовать в продакшене: их синтаксис может измениться. В финальном виде «compact source files» появились в JDK 25.</div>
+<div class="box tip"><div class="box-title">💡 Совет</div><strong>Следующий шаг:</strong> изучите <a href="../guides/syntax-basics.html">основы синтаксиса</a> — типы данных, переменные, условия и циклы.</div>
+    <nav class="pagenav"><a class="prev" href="../getting-started/configuration.html"><span class="pn-dir">← Назад</span><span class="pn-title">Настройка</span></a><a class="next" href="../guides/index.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Обзор руководств</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

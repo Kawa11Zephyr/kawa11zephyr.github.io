@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Виртуальные потоки (JDK 21) — JavaDocs 21</title>
+<meta name="description" content="Виртуальные потоки JDK 21 (Project Loom, JEP 444): как устроены, Thread.ofVirtual, newVirtualThreadPerTaskExecutor, отличия от пулов, pinning, structured concurrency.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link current" aria-current="page" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Руководства<span class="sep">/</span>Виртуальные потоки (JDK 21)</nav>
+    <h1>Виртуальные потоки (JDK 21)</h1>
+    <p class="subtitle">Project Loom: потоки, которых можно создать миллион</p>
+    <h2>Проблема «поток на запрос»</h2>
+<p>Классический поток Java (<code>Thread</code>) — обёртка над потоком операционной системы: ~1 МБ стека, дорогое создание (~1 мс), контекст-свичинг через ядро. Реально их держат сотни, максимум тысячи — и сервер упирается в потолок, даже когда CPU свободен, а потоки просто <strong>ждут сеть или базу данных</strong>.</p>
+<p><strong>Виртуальный поток</strong> (JDK 21, JEP 444) — поток, управляемый самой JVM: стек растёт в куче по мере необходимости (килобайты), при блокировке он «слезает» с потока-носителя (carrier thread), освобождая его для других задач.</p>
+<figure class="img"><img src="../assets/images/virtual-threads.svg" alt="Схема: платформенные и виртуальные потоки" loading="lazy"><figcaption>Рисунок 1. M виртуальных потоков монтируются на N потоков-носителей (N ≈ число ядер). При блокирующем вызове виртуальный поток отмонтируется, носитель берёт следующую задачу</figcaption></figure>
+<h2>Создание</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Способ 1: сразу запустить</span>
+<span class="ty">Thread</span> vt = <span class="ty">Thread</span>.<span class="fn">startVirtualThread</span>(() -&gt;
+    <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Привет из виртуального потока &quot;</span> + <span class="ty">Thread</span>.<span class="fn">currentThread</span>()));
+
+<span class="cm">// Способ 2: через билдер</span>
+<span class="ty">Thread</span> t = <span class="ty">Thread</span>.<span class="fn">ofVirtual</span>()
+    .<span class="fn">name</span>(<span class="st">&quot;worker-&quot;</span>, <span class="nu">0</span>)                  <span class="cm">// имена worker-0, worker-1, ...</span>
+    .<span class="fn">start</span>(() -&gt; <span class="fn">doWork</span>());
+
+<span class="cm">// Способ 3: неиспользованный платформенный поток для сравнения</span>
+<span class="ty">Thread</span> pt = <span class="ty">Thread</span>.<span class="fn">ofPlatform</span>().<span class="fn">name</span>(<span class="st">&quot;platform-1&quot;</span>).<span class="fn">start</span>(() -&gt; <span class="fn">doWork</span>());
+
+t.<span class="fn">join</span>();   <span class="cm">// дождаться завершения — работает как обычно</span></code></pre></div>
+<h2>Executor: поток на задачу, без пула</h2>
+<p>Главный антипаттерн Loom — <strong>пулить виртуальные потоки не нужно</strong>. Они настолько дешёвые, что создаются на каждую задачу:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// 100 000 задач с блокировкой по секунде — обычная JVM-машина справляется</span>
+<span class="kw">try</span> (<span class="kw">var</span> executor = <span class="ty">Executors</span>.<span class="fn">newVirtualThreadPerTaskExecutor</span>()) {
+    <span class="ty">List</span>&lt;<span class="ty">Future</span>&lt;<span class="ty">String</span>&gt;&gt; futures = <span class="ty">IntStream</span>.<span class="fn">range</span>(<span class="nu">0</span>, <span class="nu">100_000</span>)
+        .<span class="fn">mapToObj</span>(i -&gt; executor.<span class="fn">submit</span>(() -&gt; {
+            <span class="ty">Thread</span>.<span class="fn">sleep</span>(<span class="ty">Duration</span>.<span class="fn">ofSeconds</span>(<span class="nu">1</span>));   <span class="cm">// блокировка БЕЗ занятия потока ОС</span>
+            <span class="kw">return</span> <span class="st">&quot;task-&quot;</span> + i;
+        }))
+        .<span class="fn">toList</span>();
+
+    <span class="kw">for</span> (<span class="kw">var</span> f : futures) f.<span class="fn">get</span>();
+}   <span class="cm">// close() ждёт завершения всех задач — как и у обычных executor&#x27;ов</span></code></pre></div>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="cm"># Сравнение на машине с 8 ядрами (время примерно):</span>
+<span class="cm"># Пул из 200 платформенных потоков, 100k задач по 1с:  ~500 секунд</span>
+<span class="cm"># newVirtualThreadPerTaskExecutor, те же 100k задач:   ~1-2 секунды (!)</span></code></pre></div>
+<h2>Что изменилось в коде сервера</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Простой HTTP-сервер: был пул на 200 потоков — стал поток на соединение</span>
+<span class="ty">HttpServer</span> server = <span class="ty">HttpServer</span>.<span class="fn">create</span>(<span class="kw">new</span> <span class="ty">InetSocketAddress</span>(<span class="nu">8080</span>), <span class="nu">0</span>);
+server.<span class="fn">setExecutor</span>(<span class="ty">Executors</span>.<span class="fn">newVirtualThreadPerTaskExecutor</span>());  <span class="cm">// ← вся настройка</span>
+server.<span class="fn">createContext</span>(<span class="st">&quot;/api&quot;</span>, exchange -&gt; {
+    <span class="ty">String</span> json = <span class="fn">slowDatabaseQuery</span>();     <span class="cm">// можно писать блокирующий код!</span>
+    exchange.<span class="fn">sendResponseHeaders</span>(<span class="nu">200</span>, json.<span class="fn">length</span>());
+    <span class="kw">try</span> (<span class="kw">var</span> os = exchange.<span class="fn">getResponseBody</span>()) { os.<span class="fn">write</span>(json.<span class="fn">getBytes</span>()); }
+});
+server.<span class="fn">start</span>();</code></pre></div>
+<p>Стиль программирования остаётся <strong>простым последовательным</strong> (как в 2005-м): блокирующие вызовы JDBC, HTTP-клиента, <code>Thread.sleep</code> больше не «съедают» дефицитные ресурсы. Асинхронные цепочки <code>CompletableFuture</code> и реактивные фреймворки во многих сценариях становятся не нужны. Полный рабочий пример — <a href="../examples/example-2.html">HTTP-сервер на JDK 21</a>.</p>
+<h2>Правила и подводные камни</h2>
+<div class="table-wrap"><table><thead><tr><th>Тема</th><th>Рекомендация</th></tr></thead><tbody><tr><td>Пулинг</td><td><strong>Не пулите</strong> виртуальные потоки. <code>newVirtualThreadPerTaskExecutor()</code> на каждую задачу</td></tr><tr><td>Именование</td><td>Не храните долгоживущие ссылки; для отладки задавайте префикс имён через <code>Thread.ofVirtual().name(&quot;prefix-&quot;, 0)</code></td></tr><tr><td>ThreadLocal</td><td>Работает, но тяжело при миллионах потоков. Замена — <strong>Scoped Values</strong> (preview, JEP 446)</td></tr><tr><td>Pinning (прикрепление)</td><td>Внутри <code>synchronized</code>-блока поток не может отмонтироваться. Для блокирующих секций используйте <code>ReentrantLock</code> (в JDK 24 pinning в synchronized устранён, JEP 491)</td></tr><tr><td>Ограничение параллелизма</td><td>Нужен лимит к внешнему ресурсу (например, 10 соединений к БД)? Используйте <code>Semaphore</code>, а не пул потоков</td></tr><tr><td>CPU-задачи</td><td>Для тяжёлых вычислений виртуальные потоки не дают выигрыша — там по-прежнему уместен <code>ForkJoinPool</code>/<code>parallelStream</code></td></tr></tbody></table></div>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Демонстрация pinning — как НЕ надо:</span>
+<span class="kw">synchronized</span> (lock) {
+    httpClient.<span class="fn">send</span>(request, handler);   <span class="cm">// поток прикреплён к носителю всю блокировку!</span>
+}
+
+<span class="cm">// Как надо:</span>
+<span class="kw">private</span> <span class="kw">static</span> <span class="kw">final</span> <span class="ty">ReentrantLock</span> lock = <span class="kw">new</span> <span class="ty">ReentrantLock</span>();
+lock.<span class="fn">lock</span>();
+<span class="kw">try</span> {
+    httpClient.<span class="fn">send</span>(request, handler);   <span class="cm">// при блокировке поток отмонтируется</span>
+} <span class="kw">finally</span> {
+    lock.<span class="fn">unlock</span>();
+}</code></pre></div>
+<p>Проверить прикрепление: <code>java -Djdk.tracePinnedThreads=full MyApp</code> — стектрейсы прикреплённых потоков печатаются в консоль.</p>
+<h2>Structured Concurrency (preview, JEP 453)</h2>
+<p>Группирует связанные подзадачи в одну единицу работы: если одна упала — отменяются остальные; если отменили родителя — отменяются дети.</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Запрос «данные пользователя» + «каталог» параллельно, ждём оба</span>
+<span class="kw">try</span> (<span class="kw">var</span> scope = <span class="kw">new</span> <span class="ty">StructuredTaskScope</span>.<span class="ty">ShutdownOnFailure</span>()) {
+    <span class="ty">Subtask</span>&lt;<span class="ty">User</span>&gt;  user  = scope.<span class="fn">fork</span>(() -&gt; <span class="fn">findUser</span>());
+    <span class="ty">Subtask</span>&lt;<span class="ty">Order</span>&gt; order = scope.<span class="fn">fork</span>(() -&gt; <span class="fn">fetchOrder</span>());
+
+    scope.<span class="fn">join</span>();              <span class="cm">// ждём оба подзадача</span>
+    scope.<span class="fn">throwIfFailed</span>();     <span class="cm">// пробрасываем исключение, если было</span>
+
+    <span class="kw">return</span> <span class="kw">new</span> <span class="ty">Response</span>(user.<span class="fn">get</span>(), order.<span class="fn">get</span>());
+}   <span class="cm">// закрытие scope отменяет незавершённые подзадачи</span></code></pre></div>
+<h2>Когда что использовать</h2>
+<div class="table-wrap"><table><thead><tr><th>Задача</th><th>Инструмент</th></tr></thead><tbody><tr><td>Много блокирующего I/O (HTTP, БД, файлы)</td><td><strong>Виртуальные потоки</strong></td></tr><tr><td>Тяжёлые вычисления (рендеринг, ML-инференс)</td><td><code>ForkJoinPool</code> / <code>parallelStream()</code> (число потоков ≈ числу ядер)</td></tr><tr><td>Периодические задачи</td><td><code>ScheduledExecutorService</code> (можно на виртуальных потоках с JDK 21)</td></tr><tr><td>Конвейеры с отменой и таймаутами</td><td>Structured Concurrency (preview) + виртуальные потоки</td></tr></tbody></table></div>
+<div class="box tip"><div class="box-title">💡 Совет</div>Базовые примитивы <code>java.util.concurrent</code> — в <a href="../api/concurrency.html">справочнике API concurrency</a>.</div>
+    <nav class="pagenav"><a class="prev" href="../guides/streams-lambda.html"><span class="pn-dir">← Назад</span><span class="pn-title">Stream API</span></a><a class="next" href="../api/index.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Обзор API</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

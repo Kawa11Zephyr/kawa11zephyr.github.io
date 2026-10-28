@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Установка JDK 21 — JavaDocs 21</title>
+<meta name="description" content="Как установить JDK 21 на Windows, macOS и Linux: выбор дистрибутива (Temurin, Corretto, Oracle), команды установки и проверка.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link current" aria-current="page" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Начало работы<span class="sep">/</span>Установка JDK 21</nav>
+    <h1>Установка JDK 21</h1>
+    <p class="subtitle">Выбор дистрибутива и установка на Windows, macOS и Linux</p>
+    <p>Для разработки на Java нужен <strong>JDK</strong> (Java Development Kit). Существует много сборок одного и того же OpenJDK — они проходят общий TCK-тест на совместимость и отличаются лицензией и сроками поддержки.</p>
+<h2>Какой дистрибутив выбрать</h2>
+<div class="table-wrap"><table><thead><tr><th>Дистрибутив</th><th>Вендор</th><th>Лицензия / поддержка</th><th>Рекомендация</th></tr></thead><tbody><tr><td><strong>Eclipse Temurin</strong></td><td>Eclipse Adoptium</td><td>GPLv2+CE, бесплатно, LTS поддерживается долго</td><td>⭐ Лучший выбор для учёбы и прода</td></tr><tr><td><strong>Amazon Corretto</strong></td><td>Amazon</td><td>GPLv2+CE, бесплатные долгосрочные обновления</td><td>Отлично, особенно в AWS</td></tr><tr><td><strong>Azul Zulu</strong> (Community)</td><td>Azul</td><td>GPLv2+CE, бесплатно</td><td>Хорошая альтернатива</td></tr><tr><td><strong>Oracle JDK 21</strong></td><td>Oracle</td><td>NFTC: бесплатно для большинства, с оговорками по срокам для старых LTS</td><td>Если требует работодатель</td></tr><tr><td><strong>Microsoft Build of OpenJDK</strong></td><td>Microsoft</td><td>GPLv2+CE, бесплатно</td><td>Удобно в Azure/Windows</td></tr><tr><td><strong>BellSoft Liberica</strong></td><td>BellSoft</td><td>GPLv2+CE, бесплатно</td><td>Популярен в РФ, есть JDK FX-сборки</td></tr></tbody></table></div>
+<div class="box tip"><div class="box-title">💡 Совет</div>Все дистрибутивы JDK 21 функционально идентичны — код, собранный на Temurin, будет работать на Corretto и наоборот. Ниже показана установка Temurin.</div>
+<h2>Windows</h2>
+<p><strong>Вариант 1 — через пакетный менеджер winget</strong> (рекомендуется, PowerShell):</p>
+<div class="code-block" data-lang="powershell"><span class="code-lang">powershell</span><pre><code>winget install EclipseAdoptium.Temurin.21.JDK</code></pre></div>
+<p><strong>Вариант 2 — установщик MSI:</strong> скачайте <code>.msi</code> с <a href="https://adoptium.net/temurin/releases/?version=21" rel="noopener">adoptium.net</a>, при установке отметьте галочки *Set JAVA_HOME variable* и *Add to PATH*.</p>
+<h2>macOS</h2>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="cm"># через Homebrew</span>
+<span class="fn">brew</span> install <span class="nu">--cask</span> temurin@21
+
+<span class="cm"># проверка</span>
+<span class="fn">java</span> <span class="nu">-version</span></code></pre></div>
+<h2>Linux</h2>
+<p><strong>Вариант 1 — SDKMAN!</strong> (удобно переключать версии):</p>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="fn">curl</span> <span class="nu">-s</span> <span class="st">&quot;https://get.sdkman.io&quot;</span> | bash
+<span class="fn">source</span> <span class="st">&quot;$HOME/.sdkman/bin/sdkman-init.sh&quot;</span>
+<span class="fn">sdk</span> list java | grep 21          <span class="cm"># посмотреть доступные сборки 21</span>
+<span class="fn">sdk</span> install java 21.0.5-tem      <span class="cm"># установить Temurin 21</span></code></pre></div>
+<p><strong>Вариант 2 — APT (Ubuntu/Debian), репозиторий Adoptium:</strong></p>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="fn">sudo</span> apt install <span class="nu">-y</span> wget apt-transport-https gpg
+<span class="fn">wget</span> <span class="nu">-qO</span> - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg <span class="nu">--dearmor</span> \
+  | sudo tee /etc/apt/keyrings/adoptium.gpg &gt; /dev/null
+<span class="fn">echo</span> &quot;deb [signed-by=/etc/apt/keyrings/adoptium.gpg] \
+  https://packages.adoptium.net/artifactory/deb $(awk <span class="nu">-F=</span> <span class="st">&#x27;/^VERSION_CODENAME/{print$2}&#x27;</span> /etc/os-release) main&quot; \
+  | sudo tee /etc/apt/sources.list.d/adoptium.list
+<span class="fn">sudo</span> apt update &amp;&amp; sudo apt install <span class="nu">-y</span> temurin-21-jdk</code></pre></div>
+<h2>Проверка установки</h2>
+<div class="code-block" data-lang="console"><span class="code-lang">console</span><pre><code>$ <span class="fn">java</span> <span class="nu">-version</span>
+<span class="fn">openjdk</span> version <span class="st">&quot;21.0.5&quot;</span> 2024-10-15 LTS
+<span class="fn">OpenJDK</span> Runtime Environment Temurin-21.0.5+11 (build 21.0.5+11-LTS)
+<span class="fn">OpenJDK</span> 64-Bit Server VM Temurin-21.0.5+11 (build 21.0.5+11-LTS, mixed mode, sharing)
+
+$ <span class="fn">javac</span> <span class="nu">-version</span>
+<span class="fn">javac</span> 21.0.5</code></pre></div>
+<figure class="img"><img src="../assets/images/screenshots/terminal-install.png" alt="Терминал с выводом java -version" loading="lazy"><figcaption>Рисунок 1. Успешная установка JDK 21: <code>java -version</code> и <code>javac -version</code></figcaption></figure>
+<div class="box warn"><div class="box-title">⚠️ Внимание</div>Если команда <code>java</code> не найдена после установки — перезапустите терминал (или добавьте JDK в <code>PATH</code> вручную, см. <a href="configuration.html">следующую страницу</a>).</div>
+<h2>Что установлено</h2>
+<p>JDK занимает ~300 МБ и содержит: компилятор <code>javac</code>, запускальщик <code>java</code>, REPL <code>jshell</code>, архиватор <code>jar</code>, генератор документации <code>javadoc</code>, инструменты профилирования (<code>jcmd</code>, <code>jstack</code>, <code>jmap</code>) и полную библиотеку классов (<code>java.base</code>, <code>java.sql</code>, <code>java.net.http</code> и др.).</p>
+    <nav class="pagenav"><a class="prev" href="../faq.html"><span class="pn-dir">← Назад</span><span class="pn-title">FAQ</span></a><a class="next" href="../getting-started/configuration.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Настройка</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пример 1: Банковские счета — JavaDocs 21</title>
+<meta name="description" content="Консольное приложение «Банк» на Java 21: классы и record, HashMap, исключения, текстовые блоки, switch-меню, отчёты на Stream API.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link current" aria-current="page" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Примеры<span class="sep">/</span>Пример 1: Банковские счета</nav>
+    <h1>Пример 1: Банковские счета</h1>
+    <p class="subtitle">ООП + коллекции + Stream API в одном файле</p>
+    <p>Консольное приложение учёта банковских счетов: создание счетов, пополнение, перевод, выписка и отчёты. Демонстрирует классы, <code>record</code>, <code>HashMap</code>, пользовательские исключения, текстовые блоки, <code>switch</code>-меню и Stream API.</p>
+<h2>Полный код (BankApp.java)</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">import</span> java.math.<span class="ty">BigDecimal</span>;
+<span class="kw">import</span> java.math.<span class="ty">RoundingMode</span>;
+<span class="kw">import</span> java.util.*;
+<span class="kw">import</span> java.util.stream.<span class="ty">Collectors</span>;
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">BankApp</span> {
+
+    <span class="cm">// ---------- Доменная модель ----------</span>
+
+    <span class="cm">/** Счёт: неизменяемый идентификатор + изменяемый баланс под блокировкой. */</span>
+    <span class="kw">static</span> <span class="kw">final</span> <span class="kw">class</span> <span class="ty">Account</span> {
+        <span class="kw">private</span> <span class="kw">static</span> <span class="kw">long</span> counter = <span class="nu">1000</span>;
+        <span class="kw">final</span> <span class="kw">long</span> id;
+        <span class="kw">final</span> <span class="ty">String</span> owner;
+        <span class="kw">private</span> <span class="ty">BigDecimal</span> balance = <span class="ty">BigDecimal</span>.<span class="ty">ZERO</span>;
+
+        <span class="ty">Account</span>(<span class="ty">String</span> owner) {
+            <span class="kw">this</span>.id = ++counter;
+            <span class="kw">this</span>.owner = owner;
+        }
+
+        <span class="kw">synchronized</span> <span class="kw">void</span> <span class="fn">deposit</span>(<span class="ty">BigDecimal</span> amount) {
+            <span class="kw">if</span> (amount.<span class="fn">signum</span>() &lt;= <span class="nu">0</span>)
+                <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">IllegalArgumentException</span>(<span class="st">&quot;Сумма должна быть положительной&quot;</span>);
+            balance = balance.<span class="fn">add</span>(amount);
+        }
+
+        <span class="kw">synchronized</span> <span class="kw">void</span> <span class="fn">withdraw</span>(<span class="ty">BigDecimal</span> amount) {
+            <span class="kw">if</span> (amount.<span class="fn">signum</span>() &lt;= <span class="nu">0</span>)
+                <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">IllegalArgumentException</span>(<span class="st">&quot;Сумма должна быть положительной&quot;</span>);
+            <span class="kw">if</span> (balance.<span class="fn">compareTo</span>(amount) &lt; <span class="nu">0</span>)
+                <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">InsufficientFundsException</span>(<span class="kw">this</span>, amount);
+            balance = balance.<span class="fn">subtract</span>(amount);
+        }
+
+        <span class="kw">synchronized</span> <span class="ty">BigDecimal</span> <span class="fn">getBalance</span>() { <span class="kw">return</span> balance; }
+
+        <span class="an">@Override</span> <span class="kw">public</span> <span class="ty">String</span> <span class="fn">toString</span>() {
+            <span class="kw">return</span> <span class="st">&quot;Счёт #%d (%s): %s ₽&quot;</span>.<span class="fn">formatted</span>(id, owner,
+                    balance.<span class="fn">setScale</span>(<span class="nu">2</span>, <span class="ty">RoundingMode</span>.<span class="ty">HALF_UP</span>));
+        }
+    }
+
+    <span class="cm">/** Проверенное исключение предметной области. */</span>
+    <span class="kw">static</span> <span class="kw">class</span> <span class="ty">InsufficientFundsException</span> <span class="kw">extends</span> <span class="ty">RuntimeException</span> {
+        <span class="ty">InsufficientFundsException</span>(<span class="ty">Account</span> acc, <span class="ty">BigDecimal</span> amount) {
+            <span class="kw">super</span>(<span class="st">&quot;Недостаточно средств на счёте #%d: нужно %s, доступно %s&quot;</span>
+                    .<span class="fn">formatted</span>(acc.id, amount, acc.<span class="fn">getBalance</span>()));
+        }
+    }
+
+    <span class="cm">/** Транзакция — record: неизменяемый «переносчик данных». */</span>
+    <span class="kw">record</span> <span class="ty">Transaction</span>(<span class="kw">long</span> fromId, <span class="kw">long</span> toId, <span class="ty">BigDecimal</span> amount, <span class="ty">String</span> timestamp) {}
+
+    <span class="cm">// ---------- «База данных» ----------</span>
+
+    <span class="kw">private</span> <span class="kw">final</span> <span class="ty">Map</span>&lt;<span class="ty">Long</span>, <span class="ty">Account</span>&gt; accounts = <span class="kw">new</span> <span class="ty">LinkedHashMap</span>&lt;&gt;();
+    <span class="kw">private</span> <span class="kw">final</span> <span class="ty">List</span>&lt;<span class="ty">Transaction</span>&gt; history = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;();
+
+    <span class="ty">Account</span> <span class="fn">openAccount</span>(<span class="ty">String</span> owner) {
+        <span class="ty">Account</span> acc = <span class="kw">new</span> <span class="ty">Account</span>(owner);
+        accounts.<span class="fn">put</span>(acc.id, acc);
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Открыт &quot;</span> + acc);
+        <span class="kw">return</span> acc;
+    }
+
+    <span class="kw">void</span> <span class="fn">transfer</span>(<span class="kw">long</span> fromId, <span class="kw">long</span> toId, <span class="ty">BigDecimal</span> amount) {
+        <span class="ty">Account</span> from = <span class="fn">require</span>(fromId);
+        <span class="ty">Account</span> to = <span class="fn">require</span>(toId);
+        from.<span class="fn">withdraw</span>(amount);
+        <span class="kw">try</span> {
+            to.<span class="fn">deposit</span>(amount);
+        } <span class="kw">catch</span> (<span class="ty">RuntimeException</span> e) {
+            from.<span class="fn">deposit</span>(amount);   <span class="cm">// откат при ошибке зачисления</span>
+            <span class="kw">throw</span> e;
+        }
+        history.<span class="fn">add</span>(<span class="kw">new</span> <span class="ty">Transaction</span>(fromId, toId, amount,
+                java.time.<span class="ty">LocalDateTime</span>.<span class="fn">now</span>().<span class="fn">toString</span>()));
+        <span class="ty">System</span>.out.<span class="fn">printf</span>(<span class="st">&quot;Переведено %s ₽: #%d → #%d%n&quot;</span>, amount, fromId, toId);
+    }
+
+    <span class="kw">private</span> <span class="ty">Account</span> <span class="fn">require</span>(<span class="kw">long</span> id) {
+        <span class="ty">Account</span> acc = accounts.<span class="fn">get</span>(id);
+        <span class="kw">if</span> (acc == <span class="li">null</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">NoSuchElementException</span>(<span class="st">&quot;Счёт #&quot;</span> + id + <span class="st">&quot; не найден&quot;</span>);
+        <span class="kw">return</span> acc;
+    }
+
+    <span class="cm">// ---------- Отчёты на Stream API ----------</span>
+
+    <span class="kw">void</span> <span class="fn">printReports</span>() {
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;\n=== ОТЧЁТЫ (Stream API) ===&quot;</span>);
+
+        <span class="ty">BigDecimal</span> total = accounts.<span class="fn">values</span>().<span class="fn">stream</span>()
+                .<span class="fn">map</span>(<span class="ty">Account</span>::getBalance)
+                .<span class="fn">reduce</span>(<span class="ty">BigDecimal</span>.<span class="ty">ZERO</span>, <span class="ty">BigDecimal</span>::add);
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Суммарный капитал банка: &quot;</span> + total + <span class="st">&quot; ₽&quot;</span>);
+
+        <span class="ty">Optional</span>&lt;<span class="ty">Account</span>&gt; richest = accounts.<span class="fn">values</span>().<span class="fn">stream</span>()
+                .<span class="fn">max</span>(<span class="ty">Comparator</span>.<span class="fn">comparing</span>(<span class="ty">Account</span>::getBalance));
+        richest.<span class="fn">ifPresent</span>(a -&gt; <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Самый богатый клиент: &quot;</span> + a));
+
+        <span class="ty">Map</span>&lt;<span class="ty">Boolean</span>, <span class="ty">List</span>&lt;<span class="ty">Account</span>&gt;&gt; partition = accounts.<span class="fn">values</span>().<span class="fn">stream</span>()
+                .<span class="fn">collect</span>(<span class="ty">Collectors</span>.<span class="fn">partitioningBy</span>(
+                        a -&gt; a.<span class="fn">getBalance</span>().<span class="fn">compareTo</span>(<span class="kw">new</span> <span class="ty">BigDecimal</span>(<span class="st">&quot;10000&quot;</span>)) &gt;= <span class="nu">0</span>));
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Счетов с балансом ≥ 10 000 ₽: &quot;</span> + partition.<span class="fn">get</span>(<span class="li">true</span>).<span class="fn">size</span>());
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Счетов с балансом &lt; 10 000 ₽: &quot;</span> + partition.<span class="fn">get</span>(<span class="li">false</span>).<span class="fn">size</span>());
+
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Последние 5 транзакций:&quot;</span>);
+        history.<span class="fn">stream</span>()
+                .<span class="fn">skip</span>(<span class="ty">Math</span>.<span class="fn">max</span>(<span class="nu">0</span>, history.<span class="fn">size</span>() - <span class="nu">5</span>))
+                .<span class="fn">forEach</span>(t -&gt; <span class="ty">System</span>.out.<span class="fn">printf</span>(<span class="st">&quot;  %s → %s : %s ₽ (%s)%n&quot;</span>,
+                        t.<span class="fn">fromId</span>(), t.<span class="fn">toId</span>(), t.<span class="fn">amount</span>(), t.<span class="fn">timestamp</span>()));
+    }
+
+    <span class="cm">// ---------- Консольное меню ----------</span>
+
+    <span class="kw">private</span> <span class="kw">static</span> <span class="kw">final</span> <span class="ty">String</span> <span class="ty">MENU</span> = <span class="st">&quot;&quot;&quot;
+            ┌────────────────────────────────┐
+            │  БАНК «РОГА И КОПЫТА» — JDK 21 │
+            ├────────────────────────────────┤
+            │ 1. Открыть счёт                │
+            │ 2. Пополнить счёт              │
+            │ 3. Перевести средства          │
+            │ 4. Показать все счета          │
+            │ 5. Отчёты (Stream API)         │
+            │ 0. Выход                       │
+            └────────────────────────────────┘
+            Ваш выбор: &quot;&quot;&quot;</span>;
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> <span class="fn">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">BankApp</span> bank = <span class="kw">new</span> <span class="ty">BankApp</span>();
+        <span class="ty">Scanner</span> in = <span class="kw">new</span> <span class="ty">Scanner</span>(<span class="ty">System</span>.in);
+
+        <span class="cm">// Демо-данные, чтобы не вводить руками</span>
+        <span class="ty">Account</span> a1 = bank.<span class="fn">openAccount</span>(<span class="st">&quot;Иван Петров&quot;</span>);
+        <span class="ty">Account</span> a2 = bank.<span class="fn">openAccount</span>(<span class="st">&quot;Мария Сидорова&quot;</span>);
+        a1.<span class="fn">deposit</span>(<span class="kw">new</span> <span class="ty">BigDecimal</span>(<span class="st">&quot;50000&quot;</span>));
+        a2.<span class="fn">deposit</span>(<span class="kw">new</span> <span class="ty">BigDecimal</span>(<span class="st">&quot;7500&quot;</span>));
+
+        <span class="kw">while</span> (<span class="li">true</span>) {
+            <span class="ty">System</span>.out.<span class="fn">print</span>(<span class="ty">MENU</span>);
+            <span class="ty">String</span> choice = in.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+            <span class="kw">try</span> {
+                <span class="kw">switch</span> (choice) {
+                    <span class="kw">case</span> <span class="st">&quot;1&quot;</span> -&gt; {
+                        <span class="ty">System</span>.out.<span class="fn">print</span>(<span class="st">&quot;Имя владельца: &quot;</span>);
+                        bank.<span class="fn">openAccount</span>(in.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+                    }
+                    <span class="kw">case</span> <span class="st">&quot;2&quot;</span> -&gt; {
+                        <span class="ty">System</span>.out.<span class="fn">print</span>(<span class="st">&quot;ID счёта и сумма через пробел: &quot;</span>);
+                        <span class="ty">String</span>[] parts = in.<span class="fn">nextLine</span>().<span class="fn">split</span>(<span class="st">&quot;\\s+&quot;</span>);
+                        bank.<span class="fn">require</span>(<span class="ty">Long</span>.<span class="fn">parseLong</span>(parts[<span class="nu">0</span>]))
+                            .<span class="fn">deposit</span>(<span class="kw">new</span> <span class="ty">BigDecimal</span>(parts[<span class="nu">1</span>]));
+                    }
+                    <span class="kw">case</span> <span class="st">&quot;3&quot;</span> -&gt; {
+                        <span class="ty">System</span>.out.<span class="fn">print</span>(<span class="st">&quot;Откуда куда сумма (3 числа): &quot;</span>);
+                        <span class="ty">String</span>[] p = in.<span class="fn">nextLine</span>().<span class="fn">split</span>(<span class="st">&quot;\\s+&quot;</span>);
+                        bank.<span class="fn">transfer</span>(<span class="ty">Long</span>.<span class="fn">parseLong</span>(p[<span class="nu">0</span>]),
+                                      <span class="ty">Long</span>.<span class="fn">parseLong</span>(p[<span class="nu">1</span>]),
+                                      <span class="kw">new</span> <span class="ty">BigDecimal</span>(p[<span class="nu">2</span>]));
+                    }
+                    <span class="kw">case</span> <span class="st">&quot;4&quot;</span> -&gt; bank.accounts.<span class="fn">values</span>().<span class="fn">forEach</span>(<span class="ty">System</span>.out::println);
+                    <span class="kw">case</span> <span class="st">&quot;5&quot;</span> -&gt; bank.<span class="fn">printReports</span>();
+                    <span class="kw">case</span> <span class="st">&quot;0&quot;</span> -&gt; {
+                        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;До свидания!&quot;</span>);
+                        <span class="kw">return</span>;
+                    }
+                    <span class="kw">default</span> -&gt; <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Нет такого пункта меню&quot;</span>);
+                }
+            } <span class="kw">catch</span> (<span class="ty">InsufficientFundsException</span> | <span class="ty">IllegalArgumentException</span>
+                     | <span class="ty">NoSuchElementException</span> | <span class="ty">NumberFormatException</span>
+                     | <span class="ty">ArrayIndexOutOfBoundsException</span> e) {
+                <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;⛔ Ошибка: &quot;</span> + e.<span class="fn">getMessage</span>());
+            }
+        }
+    }
+}</code></pre></div>
+<h2>Запуск и пример сессии</h2>
+<div class="code-block" data-lang="console"><span class="code-lang">console</span><pre><code>$ <span class="fn">java</span> BankApp.java
+Открыт Счёт <span class="cm">#1001 (Иван Петров): 0.00 ₽</span>
+Открыт Счёт <span class="cm">#1002 (Мария Сидорова): 0.00 ₽</span>
+┌────────────────────────────────┐
+│  БАНК «РОГА И КОПЫТА» — JDK 21 │
+<span class="fn">...</span>
+Ваш выбор: 3
+Откуда куда сумма (3 числа): 1001 1002 3000
+Переведено 3000 ₽: <span class="cm">#1001 → #1002</span>
+<span class="fn">...</span>
+Ваш выбор: 3
+Откуда куда сумма (3 числа): 1002 1001 999999
+⛔ Ошибка: Недостаточно средств на счёте <span class="cm">#1002: нужно 999999, доступно 10500.00</span></code></pre></div>
+<h2>Что здесь демонстрируется</h2>
+<div class="table-wrap"><table><thead><tr><th>Конструкция</th><th>Где в коде</th><th>Раздел справочника</th></tr></thead><tbody><tr><td>Класс с инкапсуляцией и <code>synchronized</code></td><td><code>Account</code></td><td><a href="../guides/oop.html">ООП</a>, <a href="../api/concurrency.html">concurrency</a></td></tr><tr><td><code>record</code> для данных</td><td><code>Transaction</code></td><td><a href="../guides/oop.html">ООП: записи</a></td></tr><tr><td>Пользовательское исключение</td><td><code>InsufficientFundsException</code></td><td><a href="../api/string.html">java.lang</a></td></tr><tr><td><code>LinkedHashMap</code>, <code>ArrayList</code></td><td>«база данных» банка</td><td><a href="../guides/collections.html">Коллекции</a></td></tr><tr><td>Stream API: reduce/max/partitioningBy</td><td><code>printReports()</code></td><td><a href="../guides/streams-lambda.html">Stream API</a></td></tr><tr><td>Текстовый блок меню</td><td><code>MENU</code></td><td><a href="../api/string.html">String</a></td></tr><tr><td><code>switch</code> со стрелками (JDK 14+)</td><td><code>main()</code></td><td><a href="../guides/syntax-basics.html">Синтаксис</a></td></tr><tr><td><code>BigDecimal</code> для денег</td><td>везде</td><td>Точность важнее скорости: никогда не храните деньги в <code>double</code>!</td></tr></tbody></table></div>
+<div class="box tip"><div class="box-title">💡 Совет</div>Идеи для развития: сохранение в JSON-файл (<code>java.nio.file.Files.writeString</code>), валюта счёта, кредитный лимит, юнит-тесты (JUnit 5).</div>
+    <nav class="pagenav"><a class="prev" href="../examples/index.html"><span class="pn-dir">← Назад</span><span class="pn-title">Обзор примеров</span></a><a class="next" href="../examples/example-2.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">HTTP-сервер</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

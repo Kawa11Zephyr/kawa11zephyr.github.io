@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>История версий Java — JavaDocs 21</title>
+<meta name="description" content="Хронология релизов Java от 1.0 (1996) до 21+ (2023–2026): ключевые возможности каждой версии, LTS-релизы.">
+<meta name="docs-root" content="">
+
+<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/docs.css">
+<link rel="stylesheet" href="assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="index.html">Обзор</a><a class="nav-link" href="jdk21.html">JDK 21: обзор</a><a class="nav-link current" aria-current="page" href="changelog.html">История версий</a><a class="nav-link" href="faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="getting-started/index.html">Установка</a><a class="nav-link" href="getting-started/configuration.html">Настройка</a><a class="nav-link" href="getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="guides/index.html">Обзор руководств</a><a class="nav-link" href="guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="guides/oop.html">ООП</a><a class="nav-link" href="guides/collections.html">Коллекции</a><a class="nav-link" href="guides/streams-lambda.html">Stream API</a><a class="nav-link" href="guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="api/index.html">Обзор API</a><a class="nav-link" href="api/string.html">String / java.lang</a><a class="nav-link" href="api/arrays.html">Массивы</a><a class="nav-link" href="api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="examples/index.html">Обзор примеров</a><a class="nav-link" href="examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="index.html">Главная</a><span class="sep">/</span>Введение<span class="sep">/</span>История версий Java</nav>
+    <h1>История версий Java</h1>
+    <p class="subtitle">От Java 1.0 (1996) до современных полугодовых релизов</p>
+    <p>До 2017 года Java выходила крупными релизами раз в 2–4 года. Начиная с JDK 10 Oracle перешла на <strong>календарный цикл</strong>: новая версия каждые 6 месяцев (март и сентябрь). Каждые два года (по чётным сентябрьским релизам, начиная с 21) выбирается <strong>LTS</strong>-версия с многолетней поддержкой.</p>
+<h2>Хронология релизов</h2>
+<div class="table-wrap"><table><thead><tr><th>Версия</th><th>Год</th><th>Ключевые возможности</th></tr></thead><tbody><tr><td>1.0</td><td>1996</td><td>Первый релиз Sun Microsystems: applets, AWT, JVM</td></tr><tr><td>1.1</td><td>1997</td><td>JDBC, RMI, внутренние классы, рефлексия</td></tr><tr><td>1.2</td><td>1998</td><td>Коллекции (List/Map/Set), Swing, JIT-компилятор, <code>strictfp</code> — эра «Java 2»</td></tr><tr><td>1.3</td><td>2000</td><td>Динамические прокси, JPDA (отладка), JavaSound</td></tr><tr><td>1.4</td><td>2002</td><td>Регулярные выражения, NIO, <code>assert</code>, цепочки исключений</td></tr><tr><td>5 (1.5)</td><td>2004</td><td><strong>Дженерики</strong>, аннотации, enum, авбоксинг, varargs, foreach, <code>StringBuilder</code></td></tr><tr><td>6 (1.6)</td><td>2006</td><td>Скриптинг-API, улучшения GUI и JVM; открыт исходный код (GPLv2)</td></tr><tr><td>7</td><td>2011</td><td><code>try</code>-with-resources, <code>switch</code> по строкам, diamond <code>&lt;&gt;</code>, NIO.2, invokedynamic</td></tr><tr><td><strong>8</strong> ⭐LTS</td><td>2014</td><td><strong>Лямбда-выражения</strong>, <strong>Stream API</strong>, <code>Optional</code>, новый Date/Time API (<code>java.time</code>), интерфейсные <code>default</code>-методы</td></tr><tr><td>9</td><td>2017</td><td><strong>Модули (Project Jigsaw)</strong>, <code>jshell</code>, коллекция-фабрики <code>List.of(...)</code>, JLink</td></tr><tr><td>10</td><td>2018</td><td><code>var</code> для локальных переменных, G1 по умолчанию, AppCDS</td></tr><tr><td><strong>11</strong> ⭐LTS</td><td>2018</td><td>Первый релиз новой эры: HTTP Client (HTTP/2, WebSocket), запуск однофайловых программ <code>java Hello.java</code>, <code>String.strip()/repeat()/lines()</code>, ZGC (экспериментально)</td></tr><tr><td>12–13</td><td>2019</td><td><code>switch</code>-выражения (preview), текстовые блоки (preview), Shenandoah GC</td></tr><tr><td>14</td><td>2020</td><td>Паттерны <code>instanceof</code> (preview), <code>record</code> (preview), полезные NPE-сообщения</td></tr><tr><td>15</td><td>2020</td><td><strong>Текстовые блоки</strong> (финал), sealed-классы (preview), ZGC/Shenandoah в продуктиве</td></tr><tr><td>16</td><td>2021</td><td><strong>Записи (<code>record</code>)</strong> — финал, паттерны <code>instanceof</code> — финал, Stream.toList()</td></tr><tr><td><strong>17</strong> ⭐LTS</td><td>2021</td><td><strong>Sealed-классы</strong> — финал, pattern matching для switch (preview), строгая инкапсуляция internals JDK</td></tr><tr><td>18–19</td><td>2022</td><td>UTF-8 по умолчанию, простой веб-сервер <code>jwebserver</code>, виртуальные потоки (инкубатор)</td></tr><tr><td>20</td><td>2023</td><td>Полировка preview-возможностей (scoped values, виртуальные потоки)</td></tr><tr><td><strong>21</strong> ⭐LTS</td><td>2023</td><td><strong>Виртуальные потоки — финал</strong>, паттерны записей, pattern matching для switch, sequenced collections, поколенческий ZGC, string templates (preview). Тематика этого справочника — <a href="jdk21.html">подробный обзор</a></td></tr><tr><td>22</td><td>2024</td><td>Stream Gatherers (preview), закрепление регионов G1 за потоками, многофайловый запуск <code>java</code></td></tr><tr><td>23</td><td>2024</td><td>Markdown-комментарии <code>///</code>, preview примитивов в паттернах; String Templates сняты с рассмотрения</td></tr><tr><td>24</td><td>2025</td><td>Class-File API (финал), компактные заголовки объектов, quantum-resistant алгоритмы (ML-KEM, ML-DSA)</td></tr><tr><td><strong>25</strong> ⭐LTS</td><td>2025</td><td>Следующий LTS: компактные исходники и instance main — финал, scoped values — финал, Flexible Constructor Bodies, JFR-инструменты</td></tr><tr><td>26</td><td>2026</td><td>Текущий не-LTS релиз (март 2026): полировка возможностей 25, новые JEP по производительности</td></tr></tbody></table></div>
+<div class="box note"><div class="box-title">📘 Примечание</div>⭐ <strong>LTS</strong> (Long-Term Support) — версии с расширенной поддержкой: 8, 11, 17, 21, 25. Промежуточные релизы получают обновления безопасности только до выхода следующей версии.</div>
+<h2>Какую версию ставить в 2026 году</h2>
+<ul><li><strong>Новые проекты</strong> — JDK 21 или 25 (оба LTS). Данный справочник описывает 21 как самую распространённую LTS-версию в проде.</li><li><strong>Учебные курсы</strong> — JDK 21: стабильные виртуальные потоки и паттерны, огромное количество библиотек уже совместимо.</li><li><strong>Легаси</strong> — если проект на 8/11, миграция на 21 даёт максимум выгоды (производительность + LTS-поддержка до 2030-х).</li></ul>
+<h2>Схема нумерации</h2>
+<p>Начиная с Java 9 номер версии имеет формат <code>FEATURE.INTERIM.UPDATE</code> (например, <code>21.0.2</code>). Флаг <code>--release 21</code> при компиляции гарантирует, что код не использует API более новых версий:</p>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="fn">javac</span> <span class="nu">--release</span> 21 <span class="nu">-d</span> out src/com/example/Main.java
+<span class="fn">java</span> <span class="nu">--version</span>
+<span class="cm"># openjdk 21.0.2 2024-01-16 LTS</span></code></pre></div>
+    <nav class="pagenav"><a class="prev" href="jdk21.html"><span class="pn-dir">← Назад</span><span class="pn-title">JDK 21: обзор</span></a><a class="next" href="faq.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">FAQ</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/copy-code.js"></script>
+<script src="assets/js/search.js"></script>
+</body>
+</html>

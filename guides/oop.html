@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Объектно-ориентированное программирование — JavaDocs 21</title>
+<meta name="description" content="ООП в Java: классы и объекты, инкапсуляция, наследование, полиморфизм, интерфейсы, абстрактные классы, record и sealed.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link current" aria-current="page" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Руководства<span class="sep">/</span>Объектно-ориентированное программирование</nav>
+    <h1>Объектно-ориентированное программирование</h1>
+    <p class="subtitle">Классы, объекты и три кита ООП — плюс современные record и sealed</p>
+    <h2>Классы и объекты</h2>
+<p><strong>Класс</strong> — чертёж (описание полей и методов), <strong>объект</strong> — экземпляр класса в памяти. Конструктор инициализирует объект; <code>new</code> выделяет память в куче.</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Cat</span> {
+    <span class="cm">// Поля (состояние)</span>
+    <span class="kw">private</span> <span class="kw">final</span> <span class="ty">String</span> name;
+    <span class="kw">private</span> <span class="kw">int</span> age;
+
+    <span class="cm">// Конструктор</span>
+    <span class="kw">public</span> <span class="ty">Cat</span>(<span class="ty">String</span> name, <span class="kw">int</span> age) {
+        <span class="kw">this</span>.name = name;   <span class="cm">// this — ссылка на текущий объект</span>
+        <span class="kw">this</span>.age = age;
+    }
+
+    <span class="cm">// Метод (поведение)</span>
+    <span class="kw">public</span> <span class="kw">void</span> <span class="fn">meow</span>() {
+        <span class="ty">System</span>.out.<span class="fn">println</span>(name + <span class="st">&quot; говорит: мяу!&quot;</span>);
+    }
+
+    <span class="kw">public</span> <span class="kw">int</span> <span class="fn">getAge</span>() { <span class="kw">return</span> age; }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> <span class="fn">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">Cat</span> barsik = <span class="kw">new</span> <span class="ty">Cat</span>(<span class="st">&quot;Барсик&quot;</span>, <span class="nu">3</span>);  <span class="cm">// создание объекта</span>
+        barsik.<span class="fn">meow</span>();                       <span class="cm">// Барсик говорит: мяу!</span>
+    }
+}</code></pre></div>
+<h2>Инкапсуляция</h2>
+<p>Поля скрываются за модификатором <code>private</code>, доступ — через геттеры/сеттеры. Это защищает инварианты объекта (нельзя задать бессмысленное состояние):</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">BankAccount</span> {
+    <span class="kw">private</span> <span class="kw">double</span> balance;   <span class="cm">// никто не изменит баланс напрямую</span>
+
+    <span class="kw">public</span> <span class="kw">void</span> <span class="fn">deposit</span>(<span class="kw">double</span> amount) {
+        <span class="kw">if</span> (amount &lt;= <span class="nu">0</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">IllegalArgumentException</span>(<span class="st">&quot;Сумма должна быть &gt; 0&quot;</span>);
+        balance += amount;
+    }
+
+    <span class="kw">public</span> <span class="kw">double</span> <span class="fn">getBalance</span>() { <span class="kw">return</span> balance; }
+}</code></pre></div>
+<div class="table-wrap"><table><thead><tr><th>Модификатор</th><th>Класс</th><th>Пакет</th><th>Наследники</th><th>Все</th></tr></thead><tbody><tr><td><code>private</code></td><td>✓</td><td>—</td><td>—</td><td>—</td></tr><tr><td>package-private (без слова)</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr><tr><td><code>protected</code></td><td>✓</td><td>✓</td><td>✓</td><td>—</td></tr><tr><td><code>public</code></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr></tbody></table></div>
+<h2>Наследование</h2>
+<p>Ключевое слово <code>extends</code> создаёт подкласс. Java поддерживает одиночное наследование классов (один родитель), но множественное наследование интерфейсов.</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Animal</span> {
+    <span class="kw">protected</span> <span class="ty">String</span> name;
+
+    <span class="kw">public</span> <span class="ty">Animal</span>(<span class="ty">String</span> name) { <span class="kw">this</span>.name = name; }
+
+    <span class="kw">public</span> <span class="kw">void</span> <span class="fn">makeSound</span>() { <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Какой-то звук&quot;</span>); }
+}
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Dog</span> <span class="kw">extends</span> <span class="ty">Animal</span> {
+    <span class="kw">public</span> <span class="ty">Dog</span>(<span class="ty">String</span> name) {
+        <span class="kw">super</span>(name);              <span class="cm">// вызов конструктора родителя — первая строка</span>
+    }
+
+    <span class="an">@Override</span>                      <span class="cm">// аннотация: проверка переопределения компилятором</span>
+    <span class="kw">public</span> <span class="kw">void</span> <span class="fn">makeSound</span>() {
+        <span class="ty">System</span>.out.<span class="fn">println</span>(name + <span class="st">&quot;: Гав!&quot;</span>);
+    }
+}</code></pre></div>
+<h2>Полиморфизм</h2>
+<p>Ссылка типа родителя может указывать на объект потомка; вызванный метод определяется <strong>реальным типом объекта</strong> (динамическая диспетчеризация):</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">List</span>&lt;<span class="ty">Animal</span>&gt; animals = <span class="ty">List</span>.<span class="fn">of</span>(<span class="kw">new</span> <span class="ty">Dog</span>(<span class="st">&quot;Бобик&quot;</span>), <span class="kw">new</span> <span class="ty">Cat</span>(<span class="st">&quot;Мурка&quot;</span>));
+<span class="kw">for</span> (<span class="ty">Animal</span> a : animals) {
+    a.<span class="fn">makeSound</span>();   <span class="cm">// для Dog напечатает «Гав!», для Cat — «Мяу!»</span>
+}</code></pre></div>
+<h2>Интерфейсы</h2>
+<p>Интерфейс — контракт: «что умеет», без состояния. С JDK 8 интерфейсы могут содержать <code>default</code>- и <code>static</code>-методы с реализацией:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">public</span> <span class="kw">interface</span> <span class="ty">Flyable</span> {
+    <span class="kw">int</span> <span class="ty">MAX_ALTITUDE</span> = <span class="nu">12_000</span>;        <span class="cm">// неявно public static final</span>
+
+    <span class="kw">void</span> <span class="fn">fly</span>();                        <span class="cm">// неявно public abstract</span>
+
+    <span class="kw">default</span> <span class="kw">void</span> <span class="fn">land</span>() {              <span class="cm">// реализация по умолчанию (JDK 8+)</span>
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Плавное приземление&quot;</span>);
+    }
+
+    <span class="kw">static</span> <span class="ty">Flyable</span> <span class="fn">of</span>(<span class="ty">String</span> type) {   <span class="cm">// статический метод интерфейса</span>
+        <span class="kw">return</span> () -&gt; <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Летит &quot;</span> + type);
+    }
+}
+
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">Drone</span> <span class="kw">implements</span> <span class="ty">Flyable</span> {
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="kw">void</span> <span class="fn">fly</span>() { <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Дрон взлетает&quot;</span>); }
+}</code></pre></div>
+<h3>Абстрактные классы vs интерфейсы</h3>
+<div class="table-wrap"><table><thead><tr><th>Критерий</th><th>Абстрактный класс</th><th>Интерфейс</th></tr></thead><tbody><tr><td>Состояние (поля)</td><td>Любые, включая приватные</td><td>Только <code>public static final</code> константы</td></tr><tr><td>Конструкторы</td><td>Есть</td><td>Нет</td></tr><tr><td>Наследование</td><td>Один класс-родитель</td><td>Много интерфейсов сразу</td></tr><tr><td>Реализация методов</td><td>Любые методы</td><td><code>default</code>/<code>static</code> (public или private)</td></tr><tr><td>Когда использовать</td><td>Общая база «является» (is-a) с состоянием</td><td>Способность «умеет» (can-do), контракт</td></tr></tbody></table></div>
+<h2>Записи (record) — JDK 16+</h2>
+<p><code>record</code> — компактный неизменяемый класс-«переносчик данных»: конструктор, геттеры, <code>equals</code>, <code>hashCode</code> и <code>toString</code> генерируются автоматически.</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">public</span> <span class="kw">record</span> <span class="ty">Point</span>(<span class="kw">int</span> x, <span class="kw">int</span> y) {
+    <span class="cm">// Компактный конструктор — валидация без boilerplate:</span>
+    <span class="kw">public</span> <span class="ty">Point</span> {
+        <span class="kw">if</span> (x &lt; <span class="nu">0</span> || y &lt; <span class="nu">0</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="ty">IllegalArgumentException</span>(<span class="st">&quot;Отрицательные координаты&quot;</span>);
+    }
+}
+
+<span class="kw">var</span> p = <span class="kw">new</span> <span class="ty">Point</span>(<span class="nu">3</span>, <span class="nu">4</span>);
+p.<span class="fn">x</span>();               <span class="cm">// 3 — геттеры без префикса get</span>
+p.<span class="fn">toString</span>();        <span class="cm">// Point[x=3, y=4]</span>
+<span class="kw">new</span> <span class="ty">Point</span>(<span class="nu">3</span>, <span class="nu">4</span>).<span class="fn">equals</span>(p);   <span class="cm">// true — сравнение по значениям</span></code></pre></div>
+<h2>Запечатанные классы (sealed) — JDK 17+</h2>
+<p><code>sealed</code> ограничивает список наследников — вместе с <code>switch</code> из JDK 21 это даёт исчерпывающую алгебраическую типизацию:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">public</span> <span class="kw">sealed</span> <span class="kw">interface</span> <span class="ty">Shape</span> <span class="kw">permits</span> <span class="ty">Circle</span>, <span class="ty">Rectangle</span>, <span class="ty">Triangle</span> {}
+
+<span class="kw">public</span> <span class="kw">record</span> <span class="ty">Circle</span>(<span class="kw">double</span> radius) <span class="kw">implements</span> <span class="ty">Shape</span> {}
+<span class="kw">public</span> <span class="kw">record</span> <span class="ty">Rectangle</span>(<span class="kw">double</span> w, <span class="kw">double</span> h) <span class="kw">implements</span> <span class="ty">Shape</span> {}
+<span class="kw">public</span> <span class="kw">record</span> <span class="ty">Triangle</span>(<span class="kw">double</span> a, <span class="kw">double</span> b, <span class="kw">double</span> c) <span class="kw">implements</span> <span class="ty">Shape</span> {}
+
+<span class="cm">// switch знает ВСЕ возможные типы — default не нужен!</span>
+<span class="kw">double</span> area = <span class="kw">switch</span> (shape) {
+    <span class="kw">case</span> <span class="ty">Circle</span> c       -&gt; <span class="ty">Math</span>.<span class="ty">PI</span> * c.<span class="fn">radius</span>() * c.<span class="fn">radius</span>();
+    <span class="kw">case</span> <span class="ty">Rectangle</span> r    -&gt; r.<span class="fn">w</span>() * r.<span class="fn">h</span>();
+    <span class="kw">case</span> <span class="ty">Triangle</span> t     -&gt; {
+        <span class="kw">double</span> s = (t.<span class="fn">a</span>() + t.<span class="fn">b</span>() + t.<span class="fn">c</span>()) / <span class="nu">2</span>;   <span class="cm">// формула Герона</span>
+        <span class="kw">yield</span> <span class="ty">Math</span>.<span class="fn">sqrt</span>(s * (s - t.<span class="fn">a</span>()) * (s - t.<span class="fn">b</span>()) * (s - t.<span class="fn">c</span>()));
+    }
+};</code></pre></div>
+<div class="box tip"><div class="box-title">💡 Совет</div>Связка <strong>record + sealed + switch-паттерны</strong> — современный идиоматический стиль Java (иногда называют «алгебраическими типами данных»). Компилятор сам проверит, что вы обработали все случаи.</div>
+<h2>Статические члены и вложенные классы</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">Config</span> {
+    <span class="kw">private</span> <span class="kw">static</span> <span class="ty">Config</span> instance;              <span class="cm">// одно общее поле на класс</span>
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">final</span> <span class="ty">String</span> <span class="ty">VERSION</span> = <span class="st">&quot;21&quot;</span>;   <span class="cm">// константа</span>
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="ty">Config</span> <span class="fn">getInstance</span>() {         <span class="cm">// singleton</span>
+        <span class="kw">if</span> (instance == <span class="li">null</span>) instance = <span class="kw">new</span> <span class="ty">Config</span>();
+        <span class="kw">return</span> instance;
+    }
+
+    <span class="cm">// Статический вложенный класс — не держит ссылку на внешний объект</span>
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> <span class="ty">Builder</span> {
+        <span class="kw">public</span> <span class="ty">Builder</span> <span class="fn">port</span>(<span class="kw">int</span> p) { <span class="cm">/* ... */</span> <span class="kw">return</span> <span class="kw">this</span>; }
+        <span class="kw">public</span> <span class="ty">Config</span> <span class="fn">build</span>() { <span class="kw">return</span> <span class="kw">new</span> <span class="ty">Config</span>(); }
+    }
+}</code></pre></div>
+<div class="box note"><div class="box-title">📘 Примечание</div>Внутренние (inner, нестатические) классы хранят скрытую ссылку на внешний объект — частая причина утечек памяти в GUI/Android. Предпочитайте <code>static</code> вложенные классы, если внешний контекст не нужен.</div>
+    <nav class="pagenav"><a class="prev" href="../guides/syntax-basics.html"><span class="pn-dir">← Назад</span><span class="pn-title">Синтаксис</span></a><a class="next" href="../guides/collections.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Коллекции</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

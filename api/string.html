@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>String и java.lang — JavaDocs 21</title>
+<meta name="description" content="Класс String: неизменяемость, пул строк, основные методы, StringBuilder, текстовые блоки, сравнение equals и compareTo.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link current" aria-current="page" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Справочник API<span class="sep">/</span>String и java.lang</nav>
+    <h1>String и java.lang</h1>
+    <p class="subtitle">Самый используемый класс Java</p>
+    <h2>Неизменяемость и пул строк</h2>
+<p><code>String</code> <strong>неизменяем</strong> (immutable): ни один метод не правит существующую строку — все возвращают новую. Строковые литералы кэшируются в <strong>пуле строк</strong> (string pool) — одинаковые литералы указывают на один объект.</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">String</span> s = <span class="st">&quot;Java&quot;</span>;
+s.<span class="fn">concat</span>(<span class="st">&quot; 21&quot;</span>);                 <span class="cm">// возвратит &quot;Java 21&quot;, но s НЕ изменится!</span>
+s = s.<span class="fn">concat</span>(<span class="st">&quot; 21&quot;</span>);             <span class="cm">// теперь s = &quot;Java 21&quot;</span>
+
+<span class="ty">String</span> a = <span class="st">&quot;hello&quot;</span>;              <span class="cm">// из пула</span>
+<span class="ty">String</span> b = <span class="st">&quot;hello&quot;</span>;              <span class="cm">// тот же объект из пула</span>
+<span class="ty">String</span> c = <span class="kw">new</span> <span class="ty">String</span>(<span class="st">&quot;hello&quot;</span>);  <span class="cm">// НОВЫЙ объект в куче</span>
+a == b;        <span class="cm">// true   (одна ссылка)</span>
+a == c;        <span class="cm">// false  (разные объекты)</span>
+a.<span class="fn">equals</span>(c);   <span class="cm">// true   (одинаковое содержимое)</span>
+a.<span class="fn">intern</span>() == c.<span class="fn">intern</span>();  <span class="cm">// true — интернирование возвращает строку из пула</span></code></pre></div>
+<h2>Основные методы</h2>
+<div class="table-wrap"><table><thead><tr><th>Метод</th><th>Результат для <code>&quot;  Java 21  &quot;</code> / примеров</th></tr></thead><tbody><tr><td><code>length()</code></td><td>Число символов (UTF-16 code units)</td></tr><tr><td><code>charAt(i)</code></td><td>Символ по индексу: <code>&quot;Java&quot;.charAt(0)</code> → <code>&#x27;J&#x27;</code></td></tr><tr><td><code>substring(a, b)</code></td><td>Срез <code>[a, b)</code>: <code>&quot;Java&quot;.substring(1, 3)</code> → <code>&quot;av&quot;</code></td></tr><tr><td><code>indexOf(s)</code> / <code>lastIndexOf(s)</code></td><td>Индекс первого/последнего вхождения, −1 если нет</td></tr><tr><td><code>contains(s)</code></td><td><code>&quot;Java 21&quot;.contains(&quot;21&quot;)</code> → <code>true</code></td></tr><tr><td><code>startsWith(s)</code> / <code>endsWith(s)</code></td><td>Проверка префикса/суффикса</td></tr><tr><td><code>replace(a, b)</code></td><td>Замена всех вхождений (литеральная)</td></tr><tr><td><code>replaceAll(re, b)</code></td><td>Замена по регулярному выражению</td></tr><tr><td><code>split(re)</code></td><td><code>&quot;a,b;c&quot;.split(&quot;[,;]&quot;)</code> → <code>[a, b, c]</code></td></tr><tr><td><code>strip()</code> / <code>trim()</code></td><td>Убрать пробелы с краёв (<code>strip</code> знает Unicode, <code>trim</code> — только ASCII ≤ U+0020)</td></tr><tr><td><code>toLowerCase()</code> / <code>toUpperCase()</code></td><td>Регистр (указывайте <code>Locale.ROOT</code> для machine-значимых строк!)</td></tr><tr><td><code>equals(s)</code> / <code>equalsIgnoreCase(s)</code></td><td>Сравнение содержимого</td></tr><tr><td><code>compareTo(s)</code></td><td>Лексикографическое сравнение (для сортировки)</td></tr><tr><td><code>isBlank()</code> / <code>isEmpty()</code></td><td><code>&quot; &quot;</code> — blank, но не empty</td></tr><tr><td><code>repeat(n)</code> (JDK 11)</td><td><code>&quot;ab&quot;.repeat(3)</code> → <code>&quot;ababab&quot;</code></td></tr><tr><td><code>join(del, ...)</code></td><td><code>String.join(&quot;, &quot;, list)</code> → <code>&quot;a, b, c&quot;</code></td></tr><tr><td><code>formatted(...)</code> (JDK 15)</td><td><code>&quot;%s: %d&quot;.formatted(&quot;Java&quot;, 21)</code> → <code>&quot;Java: 21&quot;</code></td></tr><tr><td><code>lines()</code> (JDK 11)</td><td><code>Stream&lt;String&gt;</code> по строкам текста</td></tr><tr><td><code>chars()</code></td><td><code>IntStream</code> кодов символов</td></tr><tr><td><code>toCharArray()</code></td><td><code>char[]</code></td></tr></tbody></table></div>
+<h2>Форматирование</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">String</span> name = <span class="st">&quot;Java&quot;</span>; <span class="kw">int</span> version = <span class="nu">21</span>; <span class="kw">double</span> pi = <span class="nu">3.14159</span>;
+
+<span class="cm">// printf-стиль</span>
+<span class="ty">String</span> s1 = <span class="ty">String</span>.<span class="fn">format</span>(<span class="st">&quot;%s %d — %.2f&quot;</span>, name, version, pi);   <span class="cm">// Java 21 — 3.14</span>
+<span class="ty">String</span> s2 = <span class="st">&quot;%s %d&quot;</span>.<span class="fn">formatted</span>(name, version);                   <span class="cm">// то же, JDK 15+</span>
+<span class="ty">System</span>.out.<span class="fn">printf</span>(<span class="st">&quot;Версия: %d, сборка %s%n&quot;</span>, version, <span class="st">&quot;LTS&quot;</span>);
+
+<span class="cm">// Полезные флаги: %5d (ширина), %05d (нули), %,d (1 000 000), %-10s (влево)</span></code></pre></div>
+<h2>StringBuilder: когда строк много</h2>
+<p>Конкатенация в цикле создаёт O(n²) промежуточных объектов. Для склеек используйте <code>StringBuilder</code>:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">StringBuilder</span> sb = <span class="kw">new</span> <span class="ty">StringBuilder</span>();
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; <span class="nu">1000</span>; i++) {
+    sb.<span class="fn">append</span>(i).<span class="fn">append</span>(<span class="st">&#x27;,&#x27;</span>);      <span class="cm">// append, insert, delete, reverse...</span>
+}
+<span class="ty">String</span> result = sb.<span class="fn">toString</span>();
+
+<span class="cm">// Но разовая конкатенация — это нормально, компилятор сам сделает StringBuilder:</span>
+<span class="ty">String</span> ok = name + <span class="st">&quot; &quot;</span> + version;  <span class="cm">// не оптимизируйте вручную</span></code></pre></div>
+<h2>Текстовые блоки (JDK 15+)</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">String</span> json = <span class="st">&quot;&quot;&quot;
+        {
+          &quot;name&quot;: &quot;Java&quot;,
+          &quot;version&quot;: 21
+        }
+        &quot;&quot;&quot;</span>;                       <span class="cm">// тройные кавычки, многострочность без \n</span>
+
+<span class="ty">String</span> sql = <span class="st">&quot;&quot;&quot;
+        SELECT id, name
+        FROM users
+        WHERE age &gt; ?
+        &quot;&quot;&quot;</span>;                       <span class="cm">// начальный общий отступ автоматически удаляется</span></code></pre></div>
+<h2>Preview JDK 21: String Templates</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// --enable-preview: интерполяция выражений прямо в строке</span>
+<span class="ty">String</span> name = <span class="st">&quot;мир&quot;</span>;
+<span class="ty">String</span> greeting = <span class="ty">STR</span>.<span class="st">&quot;Привет, \{name}! 2+2 = \{2 + 2}&quot;</span>;
+<span class="ty">String</span> padded = <span class="ty">STR</span>.<span class="st">&quot;%8s&quot;</span>.<span class="fn">formatted</span>(name);   <span class="cm">// можно совмещать</span></code></pre></div>
+<div class="box warn"><div class="box-title">⚠️ Внимание</div>String Templates были <strong>сняты с рассмотрения в JDK 23</strong> для переработки дизайна — в продакшене используйте <code>formatted()</code>/<code>String.format</code>. Пример приведён для понимания истории preview-возможностей JDK 21.</div>
+<h2>Регулярные выражения</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">boolean</span> ok = <span class="st">&quot;java21@jdk.dev&quot;</span>.<span class="fn">matches</span>(<span class="st">&quot;[\\w.]+@[\\w.]+&quot;</span>);   <span class="cm">// быстрый разовый матч</span>
+
+<span class="ty">Pattern</span> p = <span class="ty">Pattern</span>.<span class="fn">compile</span>(<span class="st">&quot;(\\d{4})-(\\d{2})-(\\d{2})&quot;</span>); <span class="cm">// компилируем один раз</span>
+<span class="ty">Matcher</span> m = p.<span class="fn">matcher</span>(<span class="st">&quot;Дата: 2023-09-19, релиз JDK 21&quot;</span>);
+<span class="kw">if</span> (m.<span class="fn">find</span>()) {
+    m.<span class="fn">group</span>(<span class="nu">0</span>);   <span class="cm">// 2023-09-19</span>
+    m.<span class="fn">group</span>(<span class="nu">1</span>);   <span class="cm">// 2023</span>
+}
+<span class="ty">String</span> cleaned = <span class="st">&quot;a1b2c3&quot;</span>.<span class="fn">replaceAll</span>(<span class="st">&quot;\\d&quot;</span>, <span class="st">&quot;#&quot;</span>);   <span class="cm">// a#b#c#</span></code></pre></div>
+<h2>Другие важные классы java.lang</h2>
+<div class="table-wrap"><table><thead><tr><th>Класс</th><th>Назначение</th></tr></thead><tbody><tr><td><code>Object</code></td><td>Корень иерархии: <code>equals</code>, <code>hashCode</code>, <code>toString</code>, <code>getClass</code>, <code>wait/notify</code></td></tr><tr><td><code>System</code></td><td><code>out</code>/<code>err</code>, <code>currentTimeMillis()</code>, <code>getenv()</code>, <code>exit()</code></td></tr><tr><td><code>Math</code></td><td><code>max/min</code>, <code>abs</code>, <code>sqrt</code>, <code>pow</code>, <code>random</code>, <code>PI</code>, <code>E</code></td></tr><tr><td><code>Integer</code>, <code>Double</code>…</td><td>Обёртки примитивов: <code>parseInt</code>, <code>MAX_VALUE</code>, кэш −128…127</td></tr><tr><td><code>Runtime</code></td><td><code>availableProcessors()</code>, <code>freeMemory()</code>, <code>getRuntime().exec(...)</code></td></tr><tr><td><code>Thread</code></td><td>Потоки выполнения — см. <a href="concurrency.html">concurrency</a></td></tr><tr><td><code>Exception</code> иерархия</td><td><code>Throwable</code> → <code>Error</code> (не обрабатываем) / <code>Exception</code> → <code>RuntimeException</code> (unchecked)</td></tr></tbody></table></div>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// equals/hashCode — контракт: равные объекты обязаны иметь равные hashCode</span>
+<span class="an">@Override</span>
+<span class="kw">public</span> <span class="kw">boolean</span> <span class="fn">equals</span>(<span class="ty">Object</span> o) {
+    <span class="kw">if</span> (<span class="kw">this</span> == o) <span class="kw">return</span> <span class="li">true</span>;
+    <span class="kw">if</span> (!(o <span class="kw">instanceof</span> <span class="ty">Point</span> p)) <span class="kw">return</span> <span class="li">false</span>;   <span class="cm">// pattern matching, JDK 16+</span>
+    <span class="kw">return</span> x == p.x &amp;&amp; y == p.y;
+}
+<span class="an">@Override</span>
+<span class="kw">public</span> <span class="kw">int</span> <span class="fn">hashCode</span>() { <span class="kw">return</span> <span class="ty">Objects</span>.<span class="fn">hash</span>(x, y); }</code></pre></div>
+    <nav class="pagenav"><a class="prev" href="../api/index.html"><span class="pn-dir">← Назад</span><span class="pn-title">Обзор API</span></a><a class="next" href="../api/arrays.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Массивы</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

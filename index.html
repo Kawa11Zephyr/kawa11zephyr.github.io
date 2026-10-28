@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Документация Java 21 — JavaDocs 21</title>
+<meta name="description" content="Справочник по языку Java и JDK 21 LTS: установка, руководства, API, примеры кода с подсветкой синтаксиса.">
+<meta name="docs-root" content="">
+
+<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/docs.css">
+<link rel="stylesheet" href="assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link current" aria-current="page" href="index.html">Обзор</a><a class="nav-link" href="jdk21.html">JDK 21: обзор</a><a class="nav-link" href="changelog.html">История версий</a><a class="nav-link" href="faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="getting-started/index.html">Установка</a><a class="nav-link" href="getting-started/configuration.html">Настройка</a><a class="nav-link" href="getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="guides/index.html">Обзор руководств</a><a class="nav-link" href="guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="guides/oop.html">ООП</a><a class="nav-link" href="guides/collections.html">Коллекции</a><a class="nav-link" href="guides/streams-lambda.html">Stream API</a><a class="nav-link" href="guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="api/index.html">Обзор API</a><a class="nav-link" href="api/string.html">String / java.lang</a><a class="nav-link" href="api/arrays.html">Массивы</a><a class="nav-link" href="api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="examples/index.html">Обзор примеров</a><a class="nav-link" href="examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="index.html">Главная</a><span class="sep">/</span>Документация Java 21</nav>
+    <h1>Документация Java 21</h1>
+    
+    
+<div class="hero">
+  <h1>Справочник по языку Java</h1>
+  <p>Компактная документация по Java и JDK&nbsp;21 (LTS): от установки до виртуальных потоков.
+     Все примеры кода с подсветкой синтаксиса, кнопкой копирования и поиском по сайту.</p>
+  <div class="hero-badges">
+    <span class="badge accent">JDK 21 · LTS</span>
+    <span class="badge">Virtual Threads</span>
+    <span class="badge">Record Patterns</span>
+    <span class="badge">Pattern Matching for switch</span>
+    <span class="badge">Sequenced Collections</span>
+  </div>
+</div>
+
+<h2>Что такое Java</h2>
+<p><strong>Java</strong> — язык программирования общего назначения, созданный Джеймсом Гослингом в компании Sun Microsystems (первый релиз — 1995 год, с 2010 года развивается Oracle). Главная идея языка — *написал один раз, запускай где угодно* (Write Once, Run Anywhere): исходный код компилируется в <strong>байткод</strong>, который исполняет <strong>JVM</strong> (Java Virtual Machine) на любой платформе.</p>
+<p>Компилятор и среда разработки поставляются в составе <strong>JDK</strong> (Java Development Kit). Этот справочник описывает <strong>JDK 21</strong> — долгосрочную (LTS) версию, выпущенную 19 сентября 2023 года.</p>
+<h2>Из чего состоит платформа Java</h2>
+<div class="table-wrap"><table><thead><tr><th>Компонент</th><th>Что это</th><th>Аналогия</th></tr></thead><tbody><tr><td><strong>JDK</strong> (Java Development Kit)</td><td>Комплект разработчика: компилятор <code>javac</code>, интерпретатор <code>java</code>, REPL <code>jshell</code>, архиватор <code>jar</code>, документатор <code>javadoc</code> и др.</td><td>Мастерская со всеми инструментами</td></tr><tr><td><strong>JRE</strong> (Java Runtime Environment)</td><td>Среда выполнения: JVM + стандартная библиотека классов. Нужна только для запуска программ</td><td>Станок с электропитанием</td></tr><tr><td><strong>JVM</strong> (Java Virtual Machine)</td><td>Виртуальная машина, исполняющая байткод: загрузчик классов, области памяти, движок выполнения (интерпретатор + JIT), сборщик мусора</td><td>Двигатель внутри станка</td></tr></tbody></table></div>
+<figure class="img"><img src="assets/images/jvm-architecture.svg" alt="Архитектура JVM" loading="lazy"><figcaption>Рисунок 1. Архитектура JVM: подсистема загрузки классов, области данных времени выполнения и движок выполнения</figcaption></figure>
+<h2>Как устроен этот справочник</h2>
+<div class="cards"><a class="card" href="getting-started/"><span class="card-icon">🚀</span><div class="card-title">Начало работы</div><div class="card-text">Установка JDK 21 на Windows, macOS и Linux, настройка окружения, первая программа.</div></a><a class="card" href="guides/"><span class="card-icon">📖</span><div class="card-title">Руководства</div><div class="card-text">Синтаксис, ООП, коллекции, Stream API и лямбды, виртуальные потоки JDK 21.</div></a><a class="card" href="api/"><span class="card-icon">🔍</span><div class="card-title">Справочник API</div><div class="card-text">java.lang, String, массивы и java.util.concurrent — самые востребованные классы.</div></a><a class="card" href="examples/"><span class="card-icon">💡</span><div class="card-title">Примеры</div><div class="card-text">Два законченных проекта: консольное приложение и HTTP-сервер на чистом JDK 21.</div></a><a class="card" href="jdk21.html"><span class="card-icon">✨</span><div class="card-title">Что нового в JDK 21</div><div class="card-text">Обзор всех значимых изменений релиза: JEP 431–453.</div></a><a class="card" href="changelog.html"><span class="card-icon">🕘</span><div class="card-title">История версий</div><div class="card-text">Путь Java от 1.0 (1996) до 21 (2023) и более поздних релизов.</div></a></div>
+<h2>Видеообзор</h2>
+<figure class="video"><video controls preload="metadata" playsinline><source src="assets/videos/demo.mp4" type="video/mp4">Ваш браузер не поддерживает видео. <a href="assets/videos/demo.mp4">Скачайте файл</a>.</video><figcaption>Видео 1. Короткая презентация справочника (слайд-шоу, MP4/H.264) — удобно для проверки доставки тяжёлого контента через CDN</figcaption></figure>
+<h2>Ключевые возможности JDK 21</h2>
+<ul><li><strong>Виртуальные потоки</strong> (JEP 444) — лёгкие потоки, которых можно создавать миллионы; переворот в серверной разработке.</li><li><strong>Паттерны записей</strong> (JEP 440) — деконструкция <code>record</code> прямо в <code>instanceof</code> и <code>switch</code>.</li><li><strong>Сопоставление с образцом для switch</strong> (JEP 441) — <code>switch</code> по типу с защитными условиями <code>when</code>.</li><li><strong>Последовательные коллекции</strong> (JEP 431) — единые интерфейсы <code>SequencedCollection</code>, <code>getFirst()</code>/<code>getLast()</code>/<code>reversed()</code>.</li><li><strong>Поколенческий ZGC</strong> (JEP 439) — сборщик мусора с паузами менее миллисекунды стал ещё эффективнее.</li></ul>
+<p>Подробнее — в разделе <a href="jdk21.html">«Что нового в JDK 21»</a>.</p>
+<div class="box note"><div class="box-title">📘 Примечание</div>Это <strong>учебный</strong> справочник, созданный в рамках лабораторных работ по CDN (Cloudflare). Официальная документация Oracle: <a href="https://docs.oracle.com/en/java/javase/21/" rel="noopener">docs.oracle.com/en/java/javase/21</a>, спецификация языка — <a href="https://docs.oracle.com/javase/specs/" rel="noopener">Java Language Specification</a>.</div>
+    <nav class="pagenav"><a class="next" href="jdk21.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">JDK 21: обзор</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/copy-code.js"></script>
+<script src="assets/js/search.js"></script>
+</body>
+</html>

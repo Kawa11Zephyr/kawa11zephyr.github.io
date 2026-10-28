@@ -1,0 +1,16 @@
+/* ============================================================
+   JavaDocs 21 — подсветка синтаксиса (тёмная тема кода)
+   Палитра в стиле One Dark. Классы проставляются генератором
+   сайта (builder/highlight.py) прямо в HTML — поэтому страницы
+   не нуждаются в тяжёлых JS-библиотеках подсветки и отлично
+   кэшируются CDN как статический HTML.
+   ============================================================ */
+
+.code-block code .kw { color: #ff9d5c; font-weight: 600; }  /* ключевые слова: public, class, var... */
+.code-block code .ty { color: #7dd3fc; }                     /* типы: String, List, Point... */
+.code-block code .fn { color: #c4b5fd; }                     /* методы: println(), add()... */
+.code-block code .st { color: #86efac; }                     /* строки и символьные литералы */
+.code-block code .nu { color: #fbbf24; }                     /* числа: 42, 0xFF, 1.5e-3 */
+.code-block code .cm { color: #64748b; font-style: italic; } /* комментарии */
+.code-block code .an { color: #f472b6; }                     /* аннотации: @Override */
+.code-block code .li { color: #f87171; }                     /* литералы: true, false, null */

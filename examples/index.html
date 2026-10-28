@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Примеры программ — JavaDocs 21</title>
+<meta name="description" content="Два законченных примера на Java 21: консольное банковское приложение (ООП + коллекции) и HTTP-сервер без зависимостей на виртуальных потоках.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link current" aria-current="page" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Примеры<span class="sep">/</span>Примеры программ</nav>
+    <h1>Примеры программ</h1>
+    <p class="subtitle">Два законченных проекта от простого к продвинутому</p>
+    <p>Примеры написаны на чистом JDK 21 <strong>без сторонних зависимостей</strong> — их можно скопировать, скомпилировать и запустить сразу после <a href="../getting-started/index.html">установки JDK</a>.</p>
+<div class="cards"><a class="card" href="example-1.html"><span class="card-icon">🏦</span><div class="card-title">Пример 1. Банковские счета</div><div class="card-text">Консольное приложение: классы и record, коллекции Map/List, исключения, switch-меню, Stream API. Закрепляет руководства 1–4.</div></a><a class="card" href="example-2.html"><span class="card-icon">🌐</span><div class="card-title">Пример 2. HTTP-сервер на JDK 21</div><div class="card-text">JSON API без единой зависимости: встроенный HttpServer + виртуальные потоки + java.net.http клиент для теста.</div></a></div>
+<h2>Как запускать примеры</h2>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="cm"># Однофайловый пример — просто:</span>
+<span class="fn">java</span> BankApp.java
+
+<span class="cm"># Многофайловый проект:</span>
+<span class="fn">javac</span> <span class="nu">-encoding</span> UTF-8 <span class="nu">-d</span> out src/*.java
+<span class="fn">java</span> <span class="nu">-cp</span> out BankApp</code></pre></div>
+<h2>Что использовано в примерах</h2>
+<div class="table-wrap"><table><thead><tr><th>Технология</th><th>Пример 1 (Банк)</th><th>Пример 2 (HTTP-сервер)</th></tr></thead><tbody><tr><td>Классы, record, sealed</td><td>✓</td><td>—</td></tr><tr><td>Коллекции (Map, List)</td><td>✓</td><td>✓ (ConcurrentHashMap)</td></tr><tr><td>Stream API</td><td>✓ (отчёты)</td><td>—</td></tr><tr><td>Исключения</td><td>✓ (InsufficientFunds)</td><td>✓ (обработка 404/400)</td></tr><tr><td>Виртуальные потоки</td><td>—</td><td>✓ (executor)</td></tr><tr><td>Текстовые блоки</td><td>✓ (меню)</td><td>✓ (JSON-шаблоны)</td></tr><tr><td>switch с паттернами (JDK 21)</td><td>✓ (меню)</td><td>✓ (роутинг)</td></tr><tr><td>java.net.http</td><td>—</td><td>✓ (тест-клиент)</td></tr></tbody></table></div>
+    <nav class="pagenav"><a class="prev" href="../api/concurrency.html"><span class="pn-dir">← Назад</span><span class="pn-title">Concurrency API</span></a><a class="next" href="../examples/example-1.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Банк (консоль)</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Массивы и java.util.Arrays — JavaDocs 21</title>
+<meta name="description" content="Массивы в Java: объявление, инициализация, обход, многомерные массивы, утилиты Arrays — sort, binarySearch, copyOf, toString, stream.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link current" aria-current="page" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Справочник API<span class="sep">/</span>Массивы и java.util.Arrays</nav>
+    <h1>Массивы и java.util.Arrays</h1>
+    <p class="subtitle">Фиксированные структуры данных и утилиты для них</p>
+    <h2>Создание и инициализация</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">int</span>[] numbers = <span class="kw">new</span> <span class="kw">int</span>[<span class="nu">5</span>];              <span class="cm">// 5 нулей (значения по умолчанию)</span>
+<span class="kw">int</span>[] primes = {<span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">5</span>, <span class="nu">7</span>, <span class="nu">11</span>};         <span class="cm">// инициализация литералом</span>
+<span class="kw">int</span>[] also = <span class="kw">new</span> <span class="kw">int</span>[]{<span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">5</span>};         <span class="cm">// полная форма</span>
+<span class="ty">String</span>[] words = <span class="kw">new</span> <span class="ty">String</span>[<span class="nu">3</span>];          <span class="cm">// [null, null, null] — ссылочный тип!</span>
+
+numbers.length;                          <span class="cm">// 5 — длина (без скобок, это поле!)</span>
+primes[<span class="nu">0</span>];                               <span class="cm">// 2 — доступ по индексу</span>
+primes[<span class="nu">4</span>] = <span class="nu">13</span>;                          <span class="cm">// изменение элемента</span>
+<span class="cm">// primes[5] = 1;                        // ArrayIndexOutOfBoundsException</span></code></pre></div>
+<h2>Обход</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// 1. Классический for — когда нужен индекс</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; numbers.length; i++) {
+    numbers[i] *= <span class="nu">2</span>;
+}
+
+<span class="cm">// 2. for-each — когда индекс не нужен</span>
+<span class="kw">for</span> (<span class="kw">int</span> n : primes) <span class="ty">System</span>.out.<span class="fn">print</span>(n + <span class="st">&quot; &quot;</span>);
+
+<span class="cm">// 3. Stream — функциональный стиль</span>
+<span class="kw">int</span> sum = <span class="ty">Arrays</span>.<span class="fn">stream</span>(primes).<span class="fn">sum</span>();               <span class="cm">// 28</span>
+<span class="ty">String</span> csv = <span class="ty">Arrays</span>.<span class="fn">stream</span>(words)
+                   .<span class="fn">filter</span>(<span class="ty">Objects</span>::nonNull)
+                   .<span class="fn">collect</span>(<span class="ty">Collectors</span>.<span class="fn">joining</span>(<span class="st">&quot;, &quot;</span>));</code></pre></div>
+<h2>Многомерные массивы</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">int</span>[][] matrix = {
+    {<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>},
+    {<span class="nu">4</span>, <span class="nu">5</span>, <span class="nu">6</span>},
+};
+matrix[<span class="nu">1</span>][<span class="nu">2</span>];                    <span class="cm">// 6</span>
+
+<span class="kw">int</span>[][] ragged = <span class="kw">new</span> <span class="kw">int</span>[<span class="nu">3</span>][];   <span class="cm">// «рваный» массив: строки разной длины</span>
+ragged[<span class="nu">0</span>] = <span class="kw">new</span> <span class="kw">int</span>[<span class="nu">1</span>];
+ragged[<span class="nu">1</span>] = <span class="kw">new</span> <span class="kw">int</span>[<span class="nu">2</span>];
+ragged[<span class="nu">2</span>] = <span class="kw">new</span> <span class="kw">int</span>[<span class="nu">3</span>];
+
+<span class="cm">// Обход матрицы</span>
+<span class="kw">for</span> (<span class="kw">int</span>[] row : matrix) {
+    <span class="kw">for</span> (<span class="kw">int</span> cell : row) <span class="ty">System</span>.out.<span class="fn">printf</span>(<span class="st">&quot;%3d&quot;</span>, cell);
+    <span class="ty">System</span>.out.<span class="fn">println</span>();
+}</code></pre></div>
+<h2>Утилиты java.util.Arrays</h2>
+<div class="table-wrap"><table><thead><tr><th>Метод</th><th>Что делает</th></tr></thead><tbody><tr><td><code>Arrays.toString(a)</code></td><td>Читаемое представление <code>[1, 2, 3]</code> (для 2D — <code>deepToString</code>)</td></tr><tr><td><code>Arrays.sort(a)</code></td><td>Сортировка in-place: примитивы — dual-pivot quicksort O(n log n), объекты — TimSort (стабильная)</td></tr><tr><td><code>Arrays.sort(a, cmp)</code></td><td>Сортировка с компаратором</td></tr><tr><td><code>Arrays.binarySearch(a, key)</code></td><td>Бинарный поиск в <strong>отсортированном</strong> массиве; иначе результат не определён</td></tr><tr><td><code>Arrays.copyOf(a, newLen)</code></td><td>Копия новой длины (обрезка/расширение нулями)</td></tr><tr><td><code>Arrays.copyOfRange(a, from, to)</code></td><td>Копия диапазона</td></tr><tr><td><code>Arrays.fill(a, value)</code></td><td>Заполнить значением</td></tr><tr><td><code>Arrays.equals(a, b)</code></td><td>Попарное сравнение (<code>deepEquals</code> для вложенных)</td></tr><tr><td><code>Arrays.asList(...)</code></td><td>Список-представление массива фиксированного размера (устаревший стиль; лучше <code>List.of</code>)</td></tr><tr><td><code>Arrays.stream(a)</code></td><td>Поток элементов (<code>IntStream</code> для <code>int[]</code>)</td></tr><tr><td><code>Arrays.parallelSort(a)</code></td><td>Параллельная сортировка для больших массивов</td></tr><tr><td><code>Arrays.mismatch(a, b)</code></td><td>Индекс первого различия, −1 если равны (JDK 9)</td></tr></tbody></table></div>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">int</span>[] data = {<span class="nu">5</span>, <span class="nu">1</span>, <span class="nu">4</span>, <span class="nu">2</span>, <span class="nu">8</span>};
+
+<span class="ty">Arrays</span>.<span class="fn">sort</span>(data);                       <span class="cm">// [1, 2, 4, 5, 8]</span>
+<span class="kw">int</span> idx = <span class="ty">Arrays</span>.<span class="fn">binarySearch</span>(data, <span class="nu">4</span>);  <span class="cm">// 2</span>
+<span class="ty">System</span>.out.<span class="fn">println</span>(<span class="ty">Arrays</span>.<span class="fn">toString</span>(data));
+
+<span class="ty">Integer</span>[] boxed = {<span class="nu">5</span>, <span class="nu">1</span>, <span class="nu">4</span>};
+<span class="ty">Arrays</span>.<span class="fn">sort</span>(boxed, <span class="ty">Comparator</span>.<span class="fn">reverseOrder</span>());   <span class="cm">// [5, 4, 1] — только для объектов!</span>
+
+<span class="kw">int</span>[] copy = <span class="ty">Arrays</span>.<span class="fn">copyOf</span>(data, <span class="nu">10</span>);    <span class="cm">// дополнен нулями до длины 10</span></code></pre></div>
+<div class="box warn"><div class="box-title">⚠️ Внимание</div><code>Arrays.sort(int[])</code> сортирует по возрастанию без компаратора — примитивы нельзя «развернуть». Обходные пути: сортировать <code>Integer[]</code> с <code>Comparator.reverseOrder()</code>, или отсортировать по возрастанию и обойти с конца.</div>
+<h2>Массив vs ArrayList</h2>
+<div class="table-wrap"><table><thead><tr><th>Критерий</th><th><code>int[]</code> / <code>String[]</code></th><th><code>ArrayList</code></th></tr></thead><tbody><tr><td>Размер</td><td>Фиксированный</td><td>Растёт динамически</td></tr><tr><td>Примитивы</td><td>Да, без упаковки</td><td>Только обёртки (<code>Integer</code>)</td></tr><tr><td>Скорость доступа</td><td>Максимальная</td><td>Почти такая же</td></tr><tr><td>Удобство</td><td>Мало операций</td><td><code>add</code>, <code>remove</code>, <code>contains</code>, stream…</td></tr><tr><td>Когда брать</td><td>Известен размер, критична производительность, примитивы, JNI</td><td>Почти всегда в бизнес-коде</td></tr></tbody></table></div>
+<div class="box note"><div class="box-title">📘 Примечание</div>Массивы <strong>ковариантны</strong> (<code>String[]</code> можно присвоить <code>Object[]</code> — с риском <code>ArrayStoreException</code> в рантайме), а дженерики <strong>инвариантны</strong> (<code>List&lt;String&gt;</code> ≠ <code>List&lt;Object&gt;</code> — ошибка компиляции). Это одна из причин предпочитать дженерик-коллекции массивам в современном коде.</div>
+    <nav class="pagenav"><a class="prev" href="../api/string.html"><span class="pn-dir">← Назад</span><span class="pn-title">String / java.lang</span></a><a class="next" href="../api/concurrency.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Concurrency API</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

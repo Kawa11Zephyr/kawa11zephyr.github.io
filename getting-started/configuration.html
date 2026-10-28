@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Настройка окружения — JavaDocs 21</title>
+<meta name="description" content="Переменные JAVA_HOME и PATH, инструменты JDK (javac, java, jshell, jar, javadoc), выбор IDE: IntelliJ IDEA, VS Code, Eclipse.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link current" aria-current="page" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Начало работы<span class="sep">/</span>Настройка окружения</nav>
+    <h1>Настройка окружения</h1>
+    <p class="subtitle">JAVA_HOME, PATH, инструменты JDK и выбор IDE</p>
+    <h2>Переменные окружения</h2>
+<p><code>JAVA_HOME</code> — путь к корню установленного JDK. Её требуют сборочные системы (Maven, Gradle) и многие IDE. <code>PATH</code> должен содержать <code>%JAVA_HOME%\bin</code> (Windows) или <code>$JAVA_HOME/bin</code> (Linux/macOS).</p>
+<h3>Windows (PowerShell от имени администратора)</h3>
+<div class="code-block" data-lang="powershell"><span class="code-lang">powershell</span><pre><code># Узнать, где лежит JDK после установки winget/MSI:
+Get-ChildItem &#x27;C:\Program Files\Eclipse Adoptium&#x27;
+
+# Задать JAVA_HOME навсегда (путь подставьте свой):
+[Environment]::SetEnvironmentVariable(&#x27;JAVA_HOME&#x27;,
+  &#x27;C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot&#x27;, &#x27;Machine&#x27;)
+
+# Открыть новое окно терминала и проверить:
+echo $env:JAVA_HOME
+java -version</code></pre></div>
+<h3>Linux / macOS (~/.bashrc или ~/.zshrc)</h3>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="cm"># Добавить в конец файла ~/.bashrc:</span>
+<span class="fn">export</span> JAVA_HOME=$(dirname $(dirname $(readlink <span class="nu">-f</span> $(which java))))
+<span class="fn">export</span> PATH=<span class="st">&quot;$JAVA_HOME/bin:$PATH&quot;</span>
+
+<span class="cm"># Применить и проверить:</span>
+<span class="fn">source</span> ~/.bashrc
+<span class="fn">echo</span> $JAVA_HOME      <span class="cm"># например, /home/user/.sdkman/candidates/java/current</span>
+<span class="fn">java</span> <span class="nu">-version</span></code></pre></div>
+<h2>Инструменты JDK</h2>
+<div class="table-wrap"><table><thead><tr><th>Команда</th><th>Назначение</th><th>Пример</th></tr></thead><tbody><tr><td><code>javac</code></td><td>Компилятор: <code>.java</code> → <code>.class</code> (байткод)</td><td><code>javac -d out App.java</code></td></tr><tr><td><code>java</code></td><td>Запуск программы (или одного файла с JDK 11)</td><td><code>java -cp out App</code> / <code>java App.java</code></td></tr><tr><td><code>jshell</code></td><td>Интерактивный REPL — исполняет код по мере ввода</td><td><code>jshell</code> → <code>System.out.println(2+2)</code></td></tr><tr><td><code>jar</code></td><td>Упаковка классов и ресурсов в <code>.jar</code>-архив</td><td><code>jar cfe app.jar App -C out .</code></td></tr><tr><td><code>javadoc</code></td><td>Генерация HTML-документации из комментариев <code>/** */</code></td><td><code>javadoc -d docs src/*.java</code></td></tr><tr><td><code>jlink</code></td><td>Сборка урезанного runtime-образа под ваше приложение</td><td><code>jlink --add-modules java.base --output mini-jre</code></td></tr><tr><td><code>jpackage</code></td><td>Упаковка в нативный установщик (msi/deb/dmg)</td><td><code>jpackage --input . --main-jar app.jar</code></td></tr><tr><td><code>jcmd</code>, <code>jstack</code>, <code>jmap</code></td><td>Диагностика работающей JVM</td><td><code>jcmd &lt;pid&gt; Thread.print</code></td></tr></tbody></table></div>
+<h2>Выбор IDE</h2>
+<div class="table-wrap"><table><thead><tr><th>IDE</th><th>Цена</th><th>Особенности</th></tr></thead><tbody><tr><td><strong>IntelliJ IDEA Community</strong></td><td>Бесплатно</td><td>⭐ Стандарт индустрии: умный автокомплит, рефакторинги, отладчик, Maven/Gradle из коробки</td></tr><tr><td><strong>VS Code + Extension Pack for Java</strong></td><td>Бесплатно</td><td>Лёгкий редактор, подходит для небольших проектов и учёбы</td></tr><tr><td><strong>Eclipse IDE</strong></td><td>Бесплатно</td><td>Классика, мощная платформа плагинов, чуть более «тяжёлый» интерфейс</td></tr><tr><td><strong>Блокнот + терминал</strong></td><td>—</td><td>Достаточно для первых программ: <code>javac</code> + <code>java</code> без всяких IDE</td></tr></tbody></table></div>
+<h3>Настройка IntelliJ IDEA (кратко)</h3>
+<ol><li>Скачайте <strong>IntelliJ IDEA Community</strong> с <a href="https://www.jetbrains.com/idea/download/" rel="noopener">jetbrains.com</a> и установите.</li><li><code>New Project</code> → язык <strong>Java</strong> → в поле *JDK* выберите установленный JDK 21 (или *Download JDK… → Eclipse Temurin 21*).</li><li>Создайте файл <code>Main.java</code> в папке <code>src</code>, напишите код и нажмите зелёный ▶ (или <code>Shift+F10</code>).</li></ol>
+<h2>Структура простого проекта без IDE</h2>
+<div class="code-block" data-lang="text"><span class="code-lang">text</span><pre><code>myproject/
+├── src/                 # исходный код (.java)
+│   └── com/example/
+│       └── Main.java
+├── out/                 # скомпилированные классы (.class) — не коммитим в git
+└── lib/                 # сторонние jar-библиотеки (если есть)</code></pre></div>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="cm"># Компиляция всех исходников в папку out с кодировкой UTF-8:</span>
+<span class="fn">javac</span> <span class="nu">-encoding</span> UTF-8 <span class="nu">-d</span> out $(find src <span class="nu">-name</span> <span class="st">&#x27;*.java&#x27;</span>)
+
+<span class="cm"># Запуск (класс с package com.example):</span>
+<span class="fn">java</span> <span class="nu">-cp</span> out com.example.Main</code></pre></div>
+<div class="box note"><div class="box-title">📘 Примечание</div>Для серьёзных проектов используйте сборочные системы <strong>Maven</strong> или <strong>Gradle</strong> — они управляют зависимостями и сборкой автоматически. Это тема отдельного руководства, здесь мы работаем «вручную», чтобы понять механику.</div>
+    <nav class="pagenav"><a class="prev" href="../getting-started/index.html"><span class="pn-dir">← Назад</span><span class="pn-title">Установка</span></a><a class="next" href="../getting-started/first-steps.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Первые шаги</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

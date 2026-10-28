@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Основы синтаксиса — JavaDocs 21</title>
+<meta name="description" content="Базовый синтаксис Java: примитивные типы, var, операторы, условия if/switch с pattern matching, циклы for/while.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link current" aria-current="page" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Руководства<span class="sep">/</span>Основы синтаксиса</nav>
+    <h1>Основы синтаксиса</h1>
+    <p class="subtitle">Типы, переменные, операторы, ветвления и циклы</p>
+    <h2>Примитивные типы</h2>
+<p>В Java <strong>восемь</strong> примитивных типов — они хранят значение напрямую (в стеке или в полях объекта), а не ссылку:</p>
+<div class="table-wrap"><table><thead><tr><th>Тип</th><th>Размер</th><th>Диапазон / значения</th><th>Пример</th></tr></thead><tbody><tr><td><code>byte</code></td><td>8 бит</td><td>−128 … 127</td><td><code>byte b = 100;</code></td></tr><tr><td><code>short</code></td><td>16 бит</td><td>−32 768 … 32 767</td><td><code>short s = 30_000;</code></td></tr><tr><td><code>int</code></td><td>32 бита</td><td>−2³¹ … 2³¹−1 (~2.1 млрд)</td><td><code>int i = 42;</code></td></tr><tr><td><code>long</code></td><td>64 бита</td><td>−2⁶³ … 2⁶³−1</td><td><code>long l = 9_000_000_000L;</code></td></tr><tr><td><code>float</code></td><td>32 бита</td><td>~7 значащих цифр</td><td><code>float f = 1.5f;</code></td></tr><tr><td><code>double</code></td><td>64 бита</td><td>~15–17 значащих цифр</td><td><code>double d = 3.14159;</code></td></tr><tr><td><code>char</code></td><td>16 бит</td><td>Символ UTF-16</td><td><code>char c = &#x27;Я&#x27;;</code></td></tr><tr><td><code>boolean</code></td><td>1 бит*</td><td><code>true</code> / <code>false</code></td><td><code>boolean ok = true;</code></td></tr></tbody></table></div>
+<div class="box note"><div class="box-title">📘 Примечание</div>Все остальные типы — <strong>ссылочные</strong>: классы (включая <code>String</code>), интерфейсы, массивы, перечисления, записи. Переменная ссылочного типа хранит ссылку на объект в куче (heap) или <code>null</code>.</div>
+<h2>Переменные и var</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">final</span> <span class="kw">double</span> <span class="ty">PI</span> = <span class="nu">3.14159</span>;      <span class="cm">// константа: final + ЗАГЛАВНЫЕ_БУКВЫ</span>
+<span class="kw">int</span> counter = <span class="nu">0</span>;                 <span class="cm">// обычная локальная переменная</span>
+<span class="kw">var</span> list = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;<span class="ty">String</span>&gt;(); <span class="cm">// var (с JDK 10): тип выводится компилятором</span>
+                                    <span class="cm">// здесь list имеет тип ArrayList&lt;String&gt;</span></code></pre></div>
+<p><code>var</code> — не «динамическая типизация»: тип определяется один раз при инициализации и больше не меняется. Java остаётся строго статически типизированным языком.</p>
+<h2>Операторы</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Арифметические</span>
+<span class="kw">int</span> sum = <span class="nu">7</span> / <span class="nu">2</span>;        <span class="cm">// 3   — целочисленное деление!</span>
+<span class="kw">double</span> exact = <span class="nu">7</span> / <span class="nu">2.0</span>; <span class="cm">// 3.5</span>
+<span class="kw">int</span> rem = <span class="nu">7</span> % <span class="nu">2</span>;        <span class="cm">// 1   — остаток от деления</span>
+
+<span class="cm">// Сравнение и логика</span>
+<span class="kw">boolean</span> ok = (sum &gt; <span class="nu">2</span>) &amp;&amp; (rem == <span class="nu">1</span>);   <span class="cm">// &amp;&amp; — «ленивое» И</span>
+<span class="kw">boolean</span> alt = ok || sum &lt; <span class="nu">0</span>;            <span class="cm">// || — «ленивое» ИЛИ</span>
+<span class="kw">boolean</span> neg = !ok;
+
+<span class="cm">// Строки: только equals(), НЕ ==!</span>
+<span class="ty">String</span> a = <span class="st">&quot;text&quot;</span>;
+<span class="ty">String</span> b = <span class="kw">new</span> <span class="ty">String</span>(<span class="st">&quot;text&quot;</span>);
+<span class="ty">System</span>.out.<span class="fn">println</span>(a == b);      <span class="cm">// false — разные объекты</span>
+<span class="ty">System</span>.out.<span class="fn">println</span>(a.<span class="fn">equals</span>(b)); <span class="cm">// true  — одинаковое содержимое</span>
+
+<span class="cm">// Строки сцепляются через +</span>
+<span class="ty">String</span> greeting = <span class="st">&quot;Привет, &quot;</span> + <span class="st">&quot;мир!&quot;</span>.<span class="fn">repeat</span>(<span class="nu">2</span>); <span class="cm">// Привет, мир!мир!</span></code></pre></div>
+<div class="box warn"><div class="box-title">⚠️ Внимание</div>Классическая ошибка новичка — сравнение строк через <code>==</code>. Оператор <code>==</code> сравнивает <strong>ссылки</strong>, а не содержимое. Для строк всегда используйте <code>equals()</code>.</div>
+<h2>Условия: if / else</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">int</span> score = <span class="nu">87</span>;
+<span class="kw">if</span> (score &gt;= <span class="nu">90</span>) {
+    <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Отлично&quot;</span>);
+} <span class="kw">else</span> <span class="kw">if</span> (score &gt;= <span class="nu">70</span>) {
+    <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Хорошо&quot;</span>);
+} <span class="kw">else</span> {
+    <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Нужно подтянуть&quot;</span>);
+}
+
+<span class="cm">// Тернарный оператор</span>
+<span class="ty">String</span> verdict = score &gt;= <span class="nu">60</span> ? <span class="st">&quot;сдал&quot;</span> : <span class="st">&quot;не сдал&quot;</span>;
+
+<span class="cm">// instanceof с паттерном (финал с JDK 16): приведение не нужно</span>
+<span class="ty">Object</span> obj = <span class="st">&quot;строка&quot;</span>;
+<span class="kw">if</span> (obj <span class="kw">instanceof</span> <span class="ty">String</span> s &amp;&amp; s.<span class="fn">length</span>() &gt; <span class="nu">3</span>) {
+    <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Длинная строка: &quot;</span> + s);
+}</code></pre></div>
+<h2>switch: от классики к JDK 21</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Современный switch-выражение (с JDK 14): стрелки, без break, возвращает значение</span>
+<span class="ty">String</span> name = <span class="st">&quot;Java&quot;</span>;
+<span class="kw">int</span> released = <span class="kw">switch</span> (name) {
+    <span class="kw">case</span> <span class="st">&quot;Java&quot;</span>    -&gt; <span class="nu">1996</span>;
+    <span class="kw">case</span> <span class="st">&quot;Kotlin&quot;</span>  -&gt; <span class="nu">2016</span>;
+    <span class="kw">case</span> <span class="st">&quot;Scala&quot;</span>   -&gt; <span class="nu">2004</span>;
+    <span class="kw">default</span>        -&gt; <span class="nu">0</span>;
+};
+
+<span class="cm">// JDK 21: сопоставление с образцом по ТИПУ + guard-условия when</span>
+<span class="ty">Object</span> value = <span class="nu">42</span>;
+<span class="ty">String</span> result = <span class="kw">switch</span> (value) {
+    <span class="kw">case</span> <span class="ty">Integer</span> i when i &gt; <span class="nu">100</span> -&gt; <span class="st">&quot;большое число&quot;</span>;
+    <span class="kw">case</span> <span class="ty">Integer</span> i              -&gt; <span class="st">&quot;число &quot;</span> + i;
+    <span class="kw">case</span> <span class="ty">String</span> s               -&gt; <span class="st">&quot;строка &quot;</span> + s;
+    <span class="kw">case</span> <span class="kw">int</span>[] arr              -&gt; <span class="st">&quot;массив из &quot;</span> + arr.length;
+    <span class="kw">case</span> <span class="li">null</span>                   -&gt; <span class="st">&quot;null (JDK 21 умеет и так!)&quot;</span>;
+    <span class="kw">default</span>                     -&gt; <span class="st">&quot;неизвестно&quot;</span>;
+};</code></pre></div>
+<h2>Циклы</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// for — когда известно число итераций</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; <span class="nu">5</span>; i++) {
+    <span class="ty">System</span>.out.<span class="fn">print</span>(i + <span class="st">&quot; &quot;</span>);        <span class="cm">// 0 1 2 3 4</span>
+}
+
+<span class="cm">// for-each — обход коллекции/массива</span>
+<span class="kw">for</span> (<span class="ty">String</span> lang : <span class="ty">List</span>.<span class="fn">of</span>(<span class="st">&quot;Java&quot;</span>, <span class="st">&quot;Kotlin&quot;</span>)) {
+    <span class="ty">System</span>.out.<span class="fn">println</span>(lang);
+}
+
+<span class="cm">// while — условие проверяется до итерации</span>
+<span class="kw">int</span> n = <span class="nu">10</span>;
+<span class="kw">while</span> (n &gt; <span class="nu">0</span>) n /= <span class="nu">2</span>;
+
+<span class="cm">// do-while — минимум одна итерация гарантирована</span>
+<span class="kw">do</span> {
+    n++;
+} <span class="kw">while</span> (n &lt; <span class="nu">5</span>);
+
+<span class="cm">// break / continue / метки</span>
+outer:
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; <span class="nu">3</span>; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="nu">0</span>; j &lt; <span class="nu">3</span>; j++) {
+        <span class="kw">if</span> (i == j) <span class="kw">continue</span> outer;  <span class="cm">// следующая итерация внешнего цикла</span>
+        <span class="kw">if</span> (i * j &gt; <span class="nu">2</span>) <span class="kw">break</span> outer;  <span class="cm">// выход из обоих циклов</span>
+    }
+}</code></pre></div>
+<div class="box tip"><div class="box-title">💡 Совет</div>Современная Java часто заменяет явные циклы на <strong>Stream API</strong> — декларативные цепочки <code>filter</code>/<code>map</code>/<code>collect</code>. См. <a href="streams-lambda.html">руководство по лямбдам и потокам</a>.</div>
+    <nav class="pagenav"><a class="prev" href="../guides/index.html"><span class="pn-dir">← Назад</span><span class="pn-title">Обзор руководств</span></a><a class="next" href="../guides/oop.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">ООП</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

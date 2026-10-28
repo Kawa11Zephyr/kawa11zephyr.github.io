@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Коллекции — JavaDocs 21</title>
+<meta name="description" content="Коллекции Java: List, Set, Map, Queue, Deque. ArrayList, HashMap, LinkedHashSet, сложность операций, Sequenced Collections из JDK 21.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link current" aria-current="page" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Руководства<span class="sep">/</span>Коллекции</nav>
+    <h1>Коллекции</h1>
+    <p class="subtitle">List, Set, Map и Queue: что выбирать и как использовать</p>
+    <p>Collections Framework (пакет <code>java.util</code>) — набор интерфейсов и реализаций для хранения групп объектов. Интерфейс <code>Collection</code> охватывает списки, множества и очереди; <code>Map</code> (ключ→значение) стоит особняком, но относится к тому же фреймворку.</p>
+<h2>Карта интерфейсов</h2>
+<div class="table-wrap"><table><thead><tr><th>Интерфейс</th><th>Что описывает</th><th>Популярные реализации</th></tr></thead><tbody><tr><td><code>List</code></td><td>Упорядоченный список, дубликаты разрешены, доступ по индексу</td><td><code>ArrayList</code>, <code>LinkedList</code></td></tr><tr><td><code>Set</code></td><td>Множество без дубликатов</td><td><code>HashSet</code>, <code>LinkedHashSet</code>, <code>TreeSet</code></td></tr><tr><td><code>Queue</code> / <code>Deque</code></td><td>Очередь / двусторонняя очередь</td><td><code>ArrayDeque</code>, <code>PriorityQueue</code></td></tr><tr><td><code>Map</code></td><td>Пары «ключ → значение», ключи уникальны</td><td><code>HashMap</code>, <code>LinkedHashMap</code>, <code>TreeMap</code></td></tr></tbody></table></div>
+<h2>List: ArrayList и LinkedList</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">List</span>&lt;<span class="ty">String</span>&gt; names = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;();     <span class="cm">// интерфейс слева, реализация справа</span>
+names.<span class="fn">add</span>(<span class="st">&quot;Анна&quot;</span>);
+names.<span class="fn">add</span>(<span class="st">&quot;Борис&quot;</span>);
+names.<span class="fn">add</span>(<span class="nu">0</span>, <span class="st">&quot;Алиса&quot;</span>);          <span class="cm">// вставка по индексу</span>
+names.<span class="fn">set</span>(<span class="nu">1</span>, <span class="st">&quot;Анна-Мария&quot;</span>);     <span class="cm">// замена</span>
+names.<span class="fn">remove</span>(<span class="st">&quot;Борис&quot;</span>);          <span class="cm">// удаление по объекту</span>
+names.<span class="fn">get</span>(<span class="nu">0</span>);                   <span class="cm">// Алиса</span>
+names.<span class="fn">size</span>();                   <span class="cm">// 2</span>
+names.<span class="fn">contains</span>(<span class="st">&quot;Анна-Мария&quot;</span>);   <span class="cm">// true</span>
+
+<span class="cm">// Неизменяемый список (JDK 9+)</span>
+<span class="ty">List</span>&lt;<span class="ty">String</span>&gt; frozen = <span class="ty">List</span>.<span class="fn">of</span>(<span class="st">&quot;раз&quot;</span>, <span class="st">&quot;два&quot;</span>, <span class="st">&quot;три&quot;</span>);
+<span class="cm">// frozen.add(&quot;четыре&quot;);        // UnsupportedOperationException!</span>
+
+<span class="cm">// Копия любого Collection в неизменяемый List (JDK 16+)</span>
+<span class="ty">List</span>&lt;<span class="ty">String</span>&gt; copy = names.<span class="fn">stream</span>().<span class="fn">toList</span>();</code></pre></div>
+<h3>Сложность операций</h3>
+<div class="table-wrap"><table><thead><tr><th>Операция</th><th><code>ArrayList</code></th><th><code>LinkedList</code></th></tr></thead><tbody><tr><td><code>get(i)</code> / <code>set(i, v)</code></td><td><strong>O(1)</strong></td><td>O(n)</td></tr><tr><td><code>add(v)</code> (в конец)</td><td>O(1) амортизированно</td><td>O(1)</td></tr><tr><td><code>add(i, v)</code> / <code>remove(i)</code> в середину</td><td>O(n)</td><td>O(n)</td></tr><tr><td>Память</td><td>Массив + редкие расширения</td><td>2 указателя на элемент (тяжелее)</td></tr></tbody></table></div>
+<div class="box tip"><div class="box-title">💡 Совет</div>В 95% случаев выбирайте <code>ArrayList</code> — он быстрее даже для вставок благодаря кэш-локальности памяти. <code>LinkedList</code> почти не нужен; для стека/очереди используйте <code>ArrayDeque</code>.</div>
+<h2>Set: множество без дубликатов</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">Set</span>&lt;<span class="ty">String</span>&gt; unique = <span class="kw">new</span> <span class="ty">HashSet</span>&lt;&gt;(<span class="ty">List</span>.<span class="fn">of</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;a&quot;</span>, <span class="st">&quot;c&quot;</span>));
+<span class="ty">System</span>.out.<span class="fn">println</span>(unique);            <span class="cm">// [a, b, c] — дубликат исчез, порядок не гарантирован</span>
+
+<span class="cm">// LinkedHashSet — хранит порядок вставки</span>
+<span class="ty">Set</span>&lt;<span class="ty">Integer</span>&gt; ordered = <span class="kw">new</span> <span class="ty">LinkedHashSet</span>&lt;&gt;(<span class="ty">List</span>.<span class="fn">of</span>(<span class="nu">3</span>, <span class="nu">1</span>, <span class="nu">2</span>));  <span class="cm">// [3, 1, 2]</span>
+
+<span class="cm">// TreeSet — сортированный набор, O(log n)</span>
+<span class="ty">Set</span>&lt;<span class="ty">String</span>&gt; sorted = <span class="kw">new</span> <span class="ty">TreeSet</span>&lt;&gt;(<span class="ty">Set</span>.<span class="fn">of</span>(<span class="st">&quot;banana&quot;</span>, <span class="st">&quot;apple&quot;</span>)); <span class="cm">// [apple, banana]</span>
+
+<span class="cm">// Классика: удалить дубликаты из списка</span>
+<span class="ty">List</span>&lt;<span class="ty">Integer</span>&gt; deduped = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;(<span class="kw">new</span> <span class="ty">LinkedHashSet</span>&lt;&gt;(numbers));</code></pre></div>
+<h2>Map: словарь ключ→значение</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">Integer</span>&gt; ages = <span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;();
+ages.<span class="fn">put</span>(<span class="st">&quot;Анна&quot;</span>, <span class="nu">25</span>);
+ages.<span class="fn">put</span>(<span class="st">&quot;Борис&quot;</span>, <span class="nu">30</span>);
+ages.<span class="fn">put</span>(<span class="st">&quot;Анна&quot;</span>, <span class="nu">26</span>);                    <span class="cm">// перезапись значения</span>
+
+ages.<span class="fn">get</span>(<span class="st">&quot;Анна&quot;</span>);                        <span class="cm">// 26</span>
+ages.<span class="fn">getOrDefault</span>(<span class="st">&quot;Виктор&quot;</span>, -<span class="nu">1</span>);         <span class="cm">// -1 (ключа нет)</span>
+ages.<span class="fn">containsKey</span>(<span class="st">&quot;Борис&quot;</span>);               <span class="cm">// true</span>
+ages.<span class="fn">merge</span>(<span class="st">&quot;Виктор&quot;</span>, <span class="nu">40</span>, <span class="ty">Integer</span>::sum);  <span class="cm">// добавить или просуммировать</span>
+ages.<span class="fn">remove</span>(<span class="st">&quot;Борис&quot;</span>);
+
+<span class="cm">// Обход всеми способами:</span>
+<span class="kw">for</span> (<span class="ty">Map</span>.<span class="ty">Entry</span>&lt;<span class="ty">String</span>, <span class="ty">Integer</span>&gt; e : ages.<span class="fn">entrySet</span>()) {
+    <span class="ty">System</span>.out.<span class="fn">println</span>(e.<span class="fn">getKey</span>() + <span class="st">&quot; → &quot;</span> + e.<span class="fn">getValue</span>());
+}
+ages.<span class="fn">forEach</span>((name, age) -&gt; <span class="ty">System</span>.out.<span class="fn">println</span>(name + <span class="st">&quot;: &quot;</span> + age));
+
+<span class="cm">// Инициализация литералом (до 10 пар, JDK 9+)</span>
+<span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">Integer</span>&gt; small = <span class="ty">Map</span>.<span class="fn">of</span>(<span class="st">&quot;a&quot;</span>, <span class="nu">1</span>, <span class="st">&quot;b&quot;</span>, <span class="nu">2</span>);</code></pre></div>
+<div class="table-wrap"><table><thead><tr><th>Реализация</th><th>Порядок</th><th>Сложность get/put</th><th>Когда брать</th></tr></thead><tbody><tr><td><code>HashMap</code></td><td>Нет</td><td><strong>O(1)</strong></td><td>По умолчанию</td></tr><tr><td><code>LinkedHashMap</code></td><td>Вставки или доступа (LRU!)</td><td>O(1)</td><td>Нужен порядок вставки</td></tr><tr><td><code>TreeMap</code></td><td>Сортировка ключей</td><td>O(log n)</td><td>Нужны диапазоны <code>subMap</code>/<code>headMap</code></td></tr></tbody></table></div>
+<h2>Queue и Deque</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">Deque</span>&lt;<span class="ty">String</span>&gt; stack = <span class="kw">new</span> <span class="ty">ArrayDeque</span>&lt;&gt;();  <span class="cm">// стек: LIFO</span>
+stack.<span class="fn">push</span>(<span class="st">&quot;a&quot;</span>); stack.<span class="fn">push</span>(<span class="st">&quot;b&quot;</span>);
+stack.<span class="fn">pop</span>();                                <span class="cm">// b</span>
+
+<span class="ty">Deque</span>&lt;<span class="ty">String</span>&gt; queue = <span class="kw">new</span> <span class="ty">ArrayDeque</span>&lt;&gt;();  <span class="cm">// очередь: FIFO</span>
+queue.<span class="fn">offer</span>(<span class="st">&quot;первый&quot;</span>); queue.<span class="fn">offer</span>(<span class="st">&quot;второй&quot;</span>);
+queue.<span class="fn">poll</span>();                               <span class="cm">// первый</span>
+
+<span class="ty">PriorityQueue</span>&lt;<span class="ty">Task</span>&gt; pq = <span class="kw">new</span> <span class="ty">PriorityQueue</span>&lt;&gt;(<span class="ty">Comparator</span>.<span class="fn">comparingInt</span>(<span class="ty">Task</span>::priority));</code></pre></div>
+<h2>Sequenced Collections — новинка JDK 21</h2>
+<p>До JDK 21 у коллекций не было единого способа взять «первый» и «последний» элемент. Новые интерфейсы <code>SequencedCollection</code>, <code>SequencedSet</code>, <code>SequencedMap</code> (JEP 431) добавляют единые методы всем упорядоченным структурам:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Все реализации List/Set/Deque теперь умеют:</span>
+<span class="ty">SequencedCollection</span>&lt;<span class="ty">String</span>&gt; seq = <span class="kw">new</span> <span class="ty">LinkedHashSet</span>&lt;&gt;();
+seq.<span class="fn">add</span>(<span class="st">&quot;B&quot;</span>); seq.<span class="fn">add</span>(<span class="st">&quot;A&quot;</span>); seq.<span class="fn">add</span>(<span class="st">&quot;C&quot;</span>);
+
+seq.<span class="fn">addFirst</span>(<span class="st">&quot;X&quot;</span>);          <span class="cm">// X, B, A, C</span>
+seq.<span class="fn">addLast</span>(<span class="st">&quot;Z&quot;</span>);           <span class="cm">// X, B, A, C, Z</span>
+seq.<span class="fn">getFirst</span>();             <span class="cm">// X  (вместо iterator().next())</span>
+seq.<span class="fn">getLast</span>();              <span class="cm">// Z  (вместо list.get(list.size()-1))</span>
+seq.<span class="fn">removeFirst</span>();
+<span class="kw">var</span> backwards = seq.<span class="fn">reversed</span>();   <span class="cm">// Z, C, A, B — «перевёрнутое» представление</span>
+
+<span class="cm">// У Map появились sequenced-представления:</span>
+<span class="ty">LinkedHashMap</span>&lt;<span class="ty">String</span>, <span class="ty">Integer</span>&gt; map = <span class="kw">new</span> <span class="ty">LinkedHashMap</span>&lt;&gt;();
+map.<span class="fn">put</span>(<span class="st">&quot;k1&quot;</span>, <span class="nu">1</span>); map.<span class="fn">put</span>(<span class="st">&quot;k2&quot;</span>, <span class="nu">2</span>);
+map.<span class="fn">sequencedKeySet</span>().<span class="fn">getFirst</span>();       <span class="cm">// k1</span>
+map.<span class="fn">sequencedEntrySet</span>().<span class="fn">getLast</span>();      <span class="cm">// k2=2</span>
+map.<span class="fn">firstEntry</span>();                       <span class="cm">// (по LinkedHashMap)</span></code></pre></div>
+<div class="box note"><div class="box-title">📘 Примечание</div><code>reversed()</code> не копирует данные — это «вид» коллекции. Изменения исходной коллекции отражаются в перевёрнутом виде и наоборот.</div>
+<h2>Дженерики и коллекции</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">List</span>&lt;<span class="ty">Number</span>&gt; numbers = <span class="ty">List</span>.<span class="fn">of</span>(<span class="nu">1</span>, <span class="nu">2.5</span>, <span class="nu">3L</span>);       <span class="cm">// список чисел разных типов</span>
+<span class="ty">List</span>&lt;? <span class="kw">extends</span> <span class="ty">Number</span>&gt; upper = numbers;            <span class="cm">// wildcard: «какие-то Number»</span>
+<span class="kw">void</span> <span class="fn">printAll</span>(<span class="ty">List</span>&lt;?&gt; any) { any.<span class="fn">forEach</span>(<span class="ty">System</span>.out::println); }
+
+<span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">List</span>&lt;<span class="ty">String</span>&gt;&gt; grouped = <span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;();
+grouped.<span class="fn">computeIfAbsent</span>(<span class="st">&quot;fruits&quot;</span>, k -&gt; <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;()).<span class="fn">add</span>(<span class="st">&quot;apple&quot;</span>);</code></pre></div>
+<div class="box warn"><div class="box-title">⚠️ Внимание</div>Итераторы «быстрого отказа» (fail-fast): изменение коллекции во время обхода в цикле for-each бросает <code>ConcurrentModificationException</code>. Удаляйте через <code>iterator.remove()</code> или <code>removeIf()</code>.</div>
+    <nav class="pagenav"><a class="prev" href="../guides/oop.html"><span class="pn-dir">← Назад</span><span class="pn-title">ООП</span></a><a class="next" href="../guides/streams-lambda.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">Stream API</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

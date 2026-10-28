@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пример 2: HTTP-сервер на JDK 21 — JavaDocs 21</title>
+<meta name="description" content="JSON HTTP-сервер на чистом JDK 21 без зависимостей: com.sun.net.httpserver.HttpServer, виртуальные потоки, обработка GET/POST, java.net.http клиент.">
+<meta name="docs-root" content="../">
+
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="../index.html">Обзор</a><a class="nav-link" href="../jdk21.html">JDK 21: обзор</a><a class="nav-link" href="../changelog.html">История версий</a><a class="nav-link" href="../faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="../getting-started/index.html">Установка</a><a class="nav-link" href="../getting-started/configuration.html">Настройка</a><a class="nav-link" href="../getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="../guides/index.html">Обзор руководств</a><a class="nav-link" href="../guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="../guides/oop.html">ООП</a><a class="nav-link" href="../guides/collections.html">Коллекции</a><a class="nav-link" href="../guides/streams-lambda.html">Stream API</a><a class="nav-link" href="../guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="../api/index.html">Обзор API</a><a class="nav-link" href="../api/string.html">String / java.lang</a><a class="nav-link" href="../api/arrays.html">Массивы</a><a class="nav-link" href="../api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="../examples/index.html">Обзор примеров</a><a class="nav-link" href="../examples/example-1.html">Банк (консоль)</a><a class="nav-link current" aria-current="page" href="../examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="../index.html">Главная</a><span class="sep">/</span>Примеры<span class="sep">/</span>Пример 2: HTTP-сервер на JDK 21</nav>
+    <h1>Пример 2: HTTP-сервер на JDK 21</h1>
+    <p class="subtitle">JSON API без единой зависимости: HttpServer + виртуальные потоки</p>
+    <p>В JDK встроен HTTP-сервер (<code>com.sun.net.httpserver</code>, модуль <code>jdk.httpserver</code>) и современный HTTP-клиент (<code>java.net.http</code>, JDK 11+). С виртуальными потоками JDK 21 получается полноценный учебный REST API <strong>без Spring, без Maven, одним файлом</strong>.</p>
+<h2>Полный код (ApiServer.java)</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">import</span> com.sun.net.httpserver.<span class="ty">HttpExchange</span>;
+<span class="kw">import</span> com.sun.net.httpserver.<span class="ty">HttpServer</span>;
+
+<span class="kw">import</span> java.io.<span class="ty">IOException</span>;
+<span class="kw">import</span> java.io.<span class="ty">OutputStream</span>;
+<span class="kw">import</span> java.net.<span class="ty">InetSocketAddress</span>;
+<span class="kw">import</span> java.nio.charset.<span class="ty">StandardCharsets</span>;
+<span class="kw">import</span> java.time.<span class="ty">LocalDateTime</span>;
+<span class="kw">import</span> java.util.<span class="ty">List</span>;
+<span class="kw">import</span> java.util.<span class="ty">Map</span>;
+<span class="kw">import</span> java.util.concurrent.<span class="ty">ConcurrentHashMap</span>;
+<span class="kw">import</span> java.util.concurrent.<span class="ty">Executors</span>;
+<span class="kw">import</span> java.util.concurrent.atomic.<span class="ty">AtomicLong</span>;
+
+<span class="cm">/**
+ * Учебный REST API «Справочник версий Java» на чистом JDK 21.
+ * GET  /api/versions          — список версий (JSON)
+ * GET  /api/versions/{id}     — одна версия
+ * POST /api/versions          — добавить версию (JSON в теле)
+ * GET  /api/stats             — статистика запросов
+ * GET  /health                — проверка живости
+ */</span>
+<span class="kw">public</span> <span class="kw">class</span> <span class="ty">ApiServer</span> {
+
+    <span class="kw">record</span> <span class="ty">JavaVersion</span>(<span class="kw">int</span> id, <span class="ty">String</span> name, <span class="kw">int</span> year, <span class="kw">boolean</span> lts) {}
+
+    <span class="cm">// «База данных» в памяти — конкурентная, потокобезопасная</span>
+    <span class="kw">private</span> <span class="kw">static</span> <span class="kw">final</span> <span class="ty">Map</span>&lt;<span class="ty">Integer</span>, <span class="ty">JavaVersion</span>&gt; <span class="ty">DB</span> = <span class="kw">new</span> <span class="ty">ConcurrentHashMap</span>&lt;&gt;(<span class="ty">Map</span>.<span class="fn">of</span>(
+            <span class="nu">1</span>, <span class="kw">new</span> <span class="ty">JavaVersion</span>(<span class="nu">1</span>, <span class="st">&quot;Java 8&quot;</span>,  <span class="nu">2014</span>, <span class="li">true</span>),
+            <span class="nu">2</span>, <span class="kw">new</span> <span class="ty">JavaVersion</span>(<span class="nu">2</span>, <span class="st">&quot;Java 11&quot;</span>, <span class="nu">2018</span>, <span class="li">true</span>),
+            <span class="nu">3</span>, <span class="kw">new</span> <span class="ty">JavaVersion</span>(<span class="nu">3</span>, <span class="st">&quot;Java 17&quot;</span>, <span class="nu">2021</span>, <span class="li">true</span>),
+            <span class="nu">4</span>, <span class="kw">new</span> <span class="ty">JavaVersion</span>(<span class="nu">4</span>, <span class="st">&quot;Java 21&quot;</span>, <span class="nu">2023</span>, <span class="li">true</span>),
+            <span class="nu">5</span>, <span class="kw">new</span> <span class="ty">JavaVersion</span>(<span class="nu">5</span>, <span class="st">&quot;Java 25&quot;</span>, <span class="nu">2025</span>, <span class="li">true</span>)));
+    <span class="kw">private</span> <span class="kw">static</span> <span class="kw">final</span> <span class="ty">AtomicLong</span> nextId = <span class="kw">new</span> <span class="ty">AtomicLong</span>(<span class="nu">6</span>);
+    <span class="kw">private</span> <span class="kw">static</span> <span class="kw">final</span> <span class="ty">AtomicLong</span> requests = <span class="kw">new</span> <span class="ty">AtomicLong</span>();
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> <span class="fn">main</span>(<span class="ty">String</span>[] args) <span class="kw">throws</span> <span class="ty">IOException</span> {
+        <span class="kw">int</span> port = args.length &gt; <span class="nu">0</span> ? <span class="ty">Integer</span>.<span class="fn">parseInt</span>(args[<span class="nu">0</span>]) : <span class="nu">8080</span>;
+
+        <span class="ty">HttpServer</span> server = <span class="ty">HttpServer</span>.<span class="fn">create</span>(<span class="kw">new</span> <span class="ty">InetSocketAddress</span>(port), <span class="nu">0</span>);
+
+        <span class="cm">// ★ JDK 21: виртуальный поток на каждый запрос — никаких пулов и настроек</span>
+        server.<span class="fn">setExecutor</span>(<span class="ty">Executors</span>.<span class="fn">newVirtualThreadPerTaskExecutor</span>());
+
+        server.<span class="fn">createContext</span>(<span class="st">&quot;/api/versions&quot;</span>, <span class="ty">ApiServer</span>::handleVersions);
+        server.<span class="fn">createContext</span>(<span class="st">&quot;/api/stats&quot;</span>, ex -&gt; <span class="fn">respond</span>(ex, <span class="nu">200</span>, <span class="st">&quot;&quot;&quot;
+                {&quot;totalRequests&quot;: %d, &quot;versionsInDb&quot;: %d, &quot;time&quot;: &quot;%s&quot;}&quot;&quot;&quot;</span>
+                .<span class="fn">formatted</span>(requests.<span class="fn">get</span>(), <span class="ty">DB</span>.<span class="fn">size</span>(), <span class="ty">LocalDateTime</span>.<span class="fn">now</span>())));
+        server.<span class="fn">createContext</span>(<span class="st">&quot;/health&quot;</span>, ex -&gt; <span class="fn">respond</span>(ex, <span class="nu">200</span>, <span class="st">&quot;{\&quot;status\&quot;:\&quot;UP\&quot;}&quot;</span>));
+
+        server.<span class="fn">start</span>();
+        <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;API запущен: http://localhost:&quot;</span> + port + <span class="st">&quot;/api/versions&quot;</span>);
+    }
+
+    <span class="cm">/** Роутинг /api/versions с помощью switch по пути и методу (JDK 21 style). */</span>
+    <span class="kw">static</span> <span class="kw">void</span> <span class="fn">handleVersions</span>(<span class="ty">HttpExchange</span> ex) <span class="kw">throws</span> <span class="ty">IOException</span> {
+        requests.<span class="fn">incrementAndGet</span>();
+        <span class="ty">String</span> path = ex.<span class="fn">getRequestURI</span>().<span class="fn">getPath</span>();          <span class="cm">// /api/versions[/id]</span>
+        <span class="ty">String</span> tail = path.<span class="fn">length</span>() &gt; <span class="st">&quot;/api/versions/&quot;</span>.<span class="fn">length</span>() &amp;&amp; path.<span class="fn">startsWith</span>(<span class="st">&quot;/api/versions/&quot;</span>)
+                ? path.<span class="fn">substring</span>(<span class="st">&quot;/api/versions/&quot;</span>.<span class="fn">length</span>()) : <span class="st">&quot;&quot;</span>;
+
+        <span class="kw">try</span> {
+            <span class="kw">switch</span> (ex.<span class="fn">getRequestMethod</span>() + <span class="st">&quot; &quot;</span> + (tail.<span class="fn">isEmpty</span>() ? <span class="st">&quot;collection&quot;</span> : <span class="st">&quot;item&quot;</span>)) {
+                <span class="kw">case</span> <span class="st">&quot;GET collection&quot;</span> -&gt; <span class="fn">respond</span>(ex, <span class="nu">200</span>, <span class="fn">listJson</span>());
+                <span class="kw">case</span> <span class="st">&quot;GET item&quot;</span> -&gt; {
+                    <span class="kw">int</span> id = <span class="ty">Integer</span>.<span class="fn">parseInt</span>(tail);
+                    <span class="ty">JavaVersion</span> v = <span class="ty">DB</span>.<span class="fn">get</span>(id);
+                    <span class="kw">if</span> (v == <span class="li">null</span>) <span class="fn">respond</span>(ex, <span class="nu">404</span>, <span class="fn">errorJson</span>(<span class="st">&quot;Версия не найдена: &quot;</span> + id));
+                    <span class="kw">else</span> <span class="fn">respond</span>(ex, <span class="nu">200</span>, <span class="fn">toJson</span>(v));
+                }
+                <span class="kw">case</span> <span class="st">&quot;POST collection&quot;</span> -&gt; {
+                    <span class="ty">String</span> body = <span class="kw">new</span> <span class="ty">String</span>(ex.<span class="fn">getRequestBody</span>().<span class="fn">readAllBytes</span>(), <span class="ty">StandardCharsets</span>.<span class="ty">UTF_8</span>);
+                    <span class="ty">JavaVersion</span> v = <span class="fn">parse</span>(body);   <span class="cm">// учебный парсер — в проде берите Jackson/Gson</span>
+                    <span class="ty">DB</span>.<span class="fn">put</span>(v.<span class="fn">id</span>(), v);
+                    <span class="fn">respond</span>(ex, <span class="nu">201</span>, <span class="fn">toJson</span>(v));
+                }
+                <span class="kw">default</span> -&gt; <span class="fn">respond</span>(ex, <span class="nu">405</span>, <span class="fn">errorJson</span>(<span class="st">&quot;Метод не поддерживается&quot;</span>));
+            }
+        } <span class="kw">catch</span> (<span class="ty">NumberFormatException</span> e) {
+            <span class="fn">respond</span>(ex, <span class="nu">400</span>, <span class="fn">errorJson</span>(<span class="st">&quot;Некорректный id&quot;</span>));
+        }
+    }
+
+    <span class="cm">// ---------- Минимум JSON-кода руками (без библиотек) ----------</span>
+
+    <span class="kw">static</span> <span class="ty">String</span> <span class="fn">listJson</span>() {
+        <span class="ty">StringBuilder</span> sb = <span class="kw">new</span> <span class="ty">StringBuilder</span>(<span class="st">&quot;[&quot;</span>);
+        <span class="ty">DB</span>.<span class="fn">values</span>().<span class="fn">stream</span>()
+          .<span class="fn">sorted</span>((a, b) -&gt; <span class="ty">Integer</span>.<span class="fn">compare</span>(a.<span class="fn">year</span>(), b.<span class="fn">year</span>()))
+          .<span class="fn">forEach</span>(v -&gt; sb.<span class="fn">append</span>(<span class="fn">toJson</span>(v)).<span class="fn">append</span>(<span class="st">&#x27;,&#x27;</span>));
+        <span class="kw">if</span> (sb.<span class="fn">length</span>() &gt; <span class="nu">1</span>) sb.<span class="fn">setLength</span>(sb.<span class="fn">length</span>() - <span class="nu">1</span>);
+        <span class="kw">return</span> sb.<span class="fn">append</span>(<span class="st">&#x27;]&#x27;</span>).<span class="fn">toString</span>();
+    }
+
+    <span class="kw">static</span> <span class="ty">String</span> <span class="fn">toJson</span>(<span class="ty">JavaVersion</span> v) {
+        <span class="kw">return</span> <span class="st">&quot;&quot;&quot;
+                {&quot;id&quot;:%d,&quot;name&quot;:&quot;%s&quot;,&quot;year&quot;:%d,&quot;lts&quot;:%b}&quot;&quot;&quot;</span>
+                .<span class="fn">formatted</span>(v.<span class="fn">id</span>(), v.<span class="fn">name</span>(), v.<span class="fn">year</span>(), v.<span class="fn">lts</span>());
+    }
+
+    <span class="kw">static</span> <span class="ty">String</span> <span class="fn">errorJson</span>(<span class="ty">String</span> msg) {
+        <span class="kw">return</span> <span class="st">&quot;{\&quot;error\&quot;:\&quot;%s\&quot;}&quot;</span>.<span class="fn">formatted</span>(msg.<span class="fn">replace</span>(<span class="st">&quot;\&quot;&quot;</span>, <span class="st">&quot;&#x27;&quot;</span>));
+    }
+
+    <span class="cm">/** ОЧЕНЬ учебный парсер: {&quot;name&quot;:&quot;Java 22&quot;,&quot;year&quot;:2024,&quot;lts&quot;:false} */</span>
+    <span class="kw">static</span> <span class="ty">JavaVersion</span> <span class="fn">parse</span>(<span class="ty">String</span> json) {
+        <span class="ty">String</span> name = json.<span class="fn">replaceAll</span>(<span class="st">&quot;.*\&quot;name\&quot;\\s*:\\s*\&quot;([^\&quot;]+)\&quot;.*&quot;</span>, <span class="st">&quot;$1&quot;</span>);
+        <span class="kw">int</span> year = <span class="ty">Integer</span>.<span class="fn">parseInt</span>(json.<span class="fn">replaceAll</span>(<span class="st">&quot;.*\&quot;year\&quot;\\s*:\\s*(\\d+).*&quot;</span>, <span class="st">&quot;$1&quot;</span>));
+        <span class="kw">boolean</span> lts = <span class="ty">Boolean</span>.<span class="fn">parseBoolean</span>(json.<span class="fn">replaceAll</span>(<span class="st">&quot;.*\&quot;lts\&quot;\\s*:\\s*(\\w+).*&quot;</span>, <span class="st">&quot;$1&quot;</span>));
+        <span class="kw">return</span> <span class="kw">new</span> <span class="ty">JavaVersion</span>((<span class="kw">int</span>) nextId.<span class="fn">getAndIncrement</span>(), name, year, lts);
+    }
+
+    <span class="kw">static</span> <span class="kw">void</span> <span class="fn">respond</span>(<span class="ty">HttpExchange</span> ex, <span class="kw">int</span> status, <span class="ty">String</span> body) <span class="kw">throws</span> <span class="ty">IOException</span> {
+        <span class="kw">byte</span>[] bytes = body.<span class="fn">getBytes</span>(<span class="ty">StandardCharsets</span>.<span class="ty">UTF_8</span>);
+        ex.<span class="fn">getResponseHeaders</span>().<span class="fn">set</span>(<span class="st">&quot;Content-Type&quot;</span>, <span class="st">&quot;application/json; charset=utf-8&quot;</span>);
+        ex.<span class="fn">sendResponseHeaders</span>(status, bytes.length);
+        <span class="kw">try</span> (<span class="ty">OutputStream</span> os = ex.<span class="fn">getResponseBody</span>()) {
+            os.<span class="fn">write</span>(bytes);
+        }
+    }
+}</code></pre></div>
+<h2>Запуск и тестирование</h2>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="cm"># Запуск (порт 8080):</span>
+$ <span class="fn">java</span> ApiServer.java
+<span class="fn">API</span> запущен: http://localhost:8080/api/versions
+
+<span class="cm"># В другом терминале — проверяем curl&#x27;ом:</span>
+$ <span class="fn">curl</span> http://localhost:8080/api/versions
+[{<span class="st">&quot;id&quot;</span>:1,<span class="st">&quot;name&quot;</span>:<span class="st">&quot;Java 8&quot;</span>,<span class="st">&quot;year&quot;</span>:2014,<span class="st">&quot;lts&quot;</span>:true},...,{<span class="st">&quot;id&quot;</span>:5,<span class="st">&quot;name&quot;</span>:<span class="st">&quot;Java 25&quot;</span>,<span class="st">&quot;year&quot;</span>:2025,<span class="st">&quot;lts&quot;</span>:true}]
+
+$ <span class="fn">curl</span> http://localhost:8080/api/versions/4
+{<span class="st">&quot;id&quot;</span>:4,<span class="st">&quot;name&quot;</span>:<span class="st">&quot;Java 21&quot;</span>,<span class="st">&quot;year&quot;</span>:2023,<span class="st">&quot;lts&quot;</span>:true}
+
+$ <span class="fn">curl</span> <span class="nu">-X</span> POST http://localhost:8080/api/versions \
+       <span class="nu">-d</span> <span class="st">&#x27;{&quot;name&quot;:&quot;Java 26&quot;,&quot;year&quot;:2026,&quot;lts&quot;:false}&#x27;</span>
+{<span class="st">&quot;id&quot;</span>:6,<span class="st">&quot;name&quot;</span>:<span class="st">&quot;Java 26&quot;</span>,<span class="st">&quot;year&quot;</span>:2026,<span class="st">&quot;lts&quot;</span>:false}
+
+$ <span class="fn">curl</span> http://localhost:8080/api/versions/999
+{<span class="st">&quot;error&quot;</span>:<span class="st">&quot;Версия не найдена: 999&quot;</span>}</code></pre></div>
+<h2>Клиент на java.net.http (тестируем сервер кодом)</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">import</span> java.net.<span class="ty">URI</span>;
+<span class="kw">import</span> java.net.http.*;
+<span class="kw">import</span> java.time.<span class="ty">Duration</span>;
+
+<span class="ty">HttpClient</span> client = <span class="ty">HttpClient</span>.<span class="fn">newBuilder</span>()
+        .<span class="fn">version</span>(<span class="ty">HttpClient</span>.<span class="ty">Version</span>.<span class="ty">HTTP_2</span>)          <span class="cm">// HTTP/2 из коробки!</span>
+        .<span class="fn">connectTimeout</span>(<span class="ty">Duration</span>.<span class="fn">ofSeconds</span>(<span class="nu">3</span>))
+        .<span class="fn">build</span>();
+
+<span class="ty">HttpRequest</span> request = <span class="ty">HttpRequest</span>.<span class="fn">newBuilder</span>()
+        .<span class="fn">uri</span>(<span class="ty">URI</span>.<span class="fn">create</span>(<span class="st">&quot;http://localhost:8080/api/versions/4&quot;</span>))
+        .<span class="fn">timeout</span>(<span class="ty">Duration</span>.<span class="fn">ofSeconds</span>(<span class="nu">5</span>))
+        .<span class="ty">GET</span>()
+        .<span class="fn">build</span>();
+
+<span class="cm">// Синхронно:</span>
+<span class="ty">HttpResponse</span>&lt;<span class="ty">String</span>&gt; response = client.<span class="fn">send</span>(request, <span class="ty">HttpResponse</span>.<span class="ty">BodyHandlers</span>.<span class="fn">ofString</span>());
+<span class="ty">System</span>.out.<span class="fn">println</span>(response.<span class="fn">statusCode</span>() + <span class="st">&quot; &quot;</span> + response.<span class="fn">body</span>());
+
+<span class="cm">// Асинхронно (CompletableFuture):</span>
+client.<span class="fn">sendAsync</span>(request, <span class="ty">HttpResponse</span>.<span class="ty">BodyHandlers</span>.<span class="fn">ofString</span>())
+      .<span class="fn">thenApply</span>(<span class="ty">HttpResponse</span>::body)
+      .<span class="fn">thenAccept</span>(<span class="ty">System</span>.out::println);</code></pre></div>
+<h2>Нагрузочный мини-тест виртуальных потоков</h2>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// 10 000 параллельных клиентов — каждый ждёт свой ответ.</span>
+<span class="cm">// С пулом платформенных потоков это сотни потоков ОС и секунды ожидания;</span>
+<span class="cm">// с виртуальными — доли секунды и ~пики памяти в десятки МБ.</span>
+<span class="kw">try</span> (<span class="kw">var</span> pool = <span class="ty">Executors</span>.<span class="fn">newVirtualThreadPerTaskExecutor</span>()) {
+    <span class="kw">var</span> futures = java.util.stream.<span class="ty">IntStream</span>.<span class="fn">range</span>(<span class="nu">0</span>, <span class="nu">10_000</span>)
+        .<span class="fn">mapToObj</span>(i -&gt; pool.<span class="fn">submit</span>(() -&gt;
+            client.<span class="fn">send</span>(request, <span class="ty">HttpResponse</span>.<span class="ty">BodyHandlers</span>.<span class="fn">ofString</span>()).<span class="fn">statusCode</span>()))
+        .<span class="fn">toList</span>();
+    <span class="kw">long</span> ok = futures.<span class="fn">stream</span>().<span class="fn">filter</span>(f -&gt; f.<span class="fn">get</span>() == <span class="nu">200</span>).<span class="fn">count</span>();
+    <span class="ty">System</span>.out.<span class="fn">println</span>(<span class="st">&quot;Успешных ответов: &quot;</span> + ok + <span class="st">&quot;/10000&quot;</span>);
+}</code></pre></div>
+<div class="box note"><div class="box-title">📘 Примечание</div>Этот пример — идеальная основа для <strong>лабораторной работы 3.3</strong> (динамический контент и CDN): добавьте в обработчик <code>Thread.sleep(1000)</code> («медленный Origin») и сравните TTFB напрямую и через Cloudflare.</div>
+<div class="box warn"><div class="box-title">⚠️ Внимание</div><code>com.sun.net.httpserver</code> предназначен для разработки и тестов. В продакшене используйте полноценные серверы/фреймворки (Spring Boot, Quarkus, Helidon, Javalin) — но сам подход «виртуальный поток на запрос» в них уже стандарт (Spring Boot 3.2+, Tomcat 10.1+).</div>
+    <nav class="pagenav"><a class="prev" href="../examples/example-1.html"><span class="pn-dir">← Назад</span><span class="pn-title">Банк (консоль)</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="../assets/js/sidebar.js"></script>
+<script src="../assets/js/copy-code.js"></script>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

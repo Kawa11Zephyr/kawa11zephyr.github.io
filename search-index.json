@@ -1,0 +1,339 @@
+[
+ {
+  "t": "Документация Java 21",
+  "u": "index.html",
+  "s": "Введение",
+  "d": "Справочник по языку Java и JDK 21 LTS: установка, руководства, API, примеры кода с подсветкой синтаксиса.",
+  "k": [
+   "java",
+   "jdk 21",
+   "документация",
+   "справочник",
+   "lts"
+  ]
+ },
+ {
+  "t": "Что нового в JDK 21",
+  "u": "jdk21.html",
+  "s": "Введение",
+  "d": "Все значимые возможности JDK 21 LTS: виртуальные потоки, паттерны записей, pattern matching для switch, sequenced collections, поколенческий ZGC.",
+  "k": [
+   "jdk 21",
+   "virtual threads",
+   "record patterns",
+   "pattern matching",
+   "switch",
+   "sequenced collections",
+   "zgc",
+   "jep"
+  ]
+ },
+ {
+  "t": "История версий Java",
+  "u": "changelog.html",
+  "s": "Введение",
+  "d": "Хронология релизов Java от 1.0 (1996) до 21+ (2023–2026): ключевые возможности каждой версии, LTS-релизы.",
+  "k": [
+   "история java",
+   "версии",
+   "lts",
+   "changelog",
+   "релизы"
+  ]
+ },
+ {
+  "t": "Часто задаваемые вопросы",
+  "u": "faq.html",
+  "s": "Введение",
+  "d": "Ответы на популярные вопросы о Java: отличие от JavaScript, лицензии Oracle, выбор JDK, LTS, обучение.",
+  "k": [
+   "faq",
+   "вопросы",
+   "javascript",
+   "лицензия",
+   "oracle",
+   "temurin",
+   "lts"
+  ]
+ },
+ {
+  "t": "Установка JDK 21",
+  "u": "getting-started/index.html",
+  "s": "Начало работы",
+  "d": "Как установить JDK 21 на Windows, macOS и Linux: выбор дистрибутива (Temurin, Corretto, Oracle), команды установки и проверка.",
+  "k": [
+   "установка",
+   "jdk",
+   "windows",
+   "macos",
+   "linux",
+   "temurin",
+   "sdkman",
+   "winget",
+   "brew",
+   "apt"
+  ]
+ },
+ {
+  "t": "Настройка окружения",
+  "u": "getting-started/configuration.html",
+  "s": "Начало работы",
+  "d": "Переменные JAVA_HOME и PATH, инструменты JDK (javac, java, jshell, jar, javadoc), выбор IDE: IntelliJ IDEA, VS Code, Eclipse.",
+  "k": [
+   "java_home",
+   "path",
+   "переменные окружения",
+   "ide",
+   "intellij",
+   "vs code",
+   "eclipse",
+   "jshell",
+   "jar",
+   "javadoc"
+  ]
+ },
+ {
+  "t": "Первая программа",
+  "u": "getting-started/first-steps.html",
+  "s": "Начало работы",
+  "d": "Hello World на Java: компиляция javac, запуск java, однофайловый режим, jshell, структура метода main, preview-возможность instance main из JDK 21.",
+  "k": [
+   "hello world",
+   "первая программа",
+   "javac",
+   "java",
+   "main",
+   "jshell",
+   "байткод",
+   "компиляция"
+  ]
+ },
+ {
+  "t": "Руководства по Java",
+  "u": "guides/index.html",
+  "s": "Руководства",
+  "d": "Раздел руководств: синтаксис, ООП, коллекции, Stream API и лямбды, виртуальные потоки JDK 21.",
+  "k": [
+   "руководства",
+   "гайды",
+   "обучение java"
+  ]
+ },
+ {
+  "t": "Основы синтаксиса",
+  "u": "guides/syntax-basics.html",
+  "s": "Руководства",
+  "d": "Базовый синтаксис Java: примитивные типы, var, операторы, условия if/switch с pattern matching, циклы for/while.",
+  "k": [
+   "синтаксис",
+   "типы данных",
+   "переменные",
+   "var",
+   "операторы",
+   "if",
+   "switch",
+   "циклы",
+   "for",
+   "while",
+   "pattern matching"
+  ]
+ },
+ {
+  "t": "Объектно-ориентированное программирование",
+  "u": "guides/oop.html",
+  "s": "Руководства",
+  "d": "ООП в Java: классы и объекты, инкапсуляция, наследование, полиморфизм, интерфейсы, абстрактные классы, record и sealed.",
+  "k": [
+   "ооп",
+   "класс",
+   "объект",
+   "инкапсуляция",
+   "наследование",
+   "полиморфизм",
+   "интерфейс",
+   "абстрактный класс",
+   "record",
+   "sealed",
+   "конструктор"
+  ]
+ },
+ {
+  "t": "Коллекции",
+  "u": "guides/collections.html",
+  "s": "Руководства",
+  "d": "Коллекции Java: List, Set, Map, Queue, Deque. ArrayList, HashMap, LinkedHashSet, сложность операций, Sequenced Collections из JDK 21.",
+  "k": [
+   "коллекции",
+   "list",
+   "set",
+   "map",
+   "arraylist",
+   "linkedlist",
+   "hashmap",
+   "hashset",
+   "tree map",
+   "queue",
+   "deque",
+   "sequenced collections",
+   "сложность"
+  ]
+ },
+ {
+  "t": "Лямбды и Stream API",
+  "u": "guides/streams-lambda.html",
+  "s": "Руководства",
+  "d": "Функциональный стиль в Java: лямбда-выражения, функциональные интерфейсы, ссылки на методы, Stream API — filter, map, collect, groupingBy.",
+  "k": [
+   "лямбда",
+   "lambda",
+   "stream",
+   "поток",
+   "функциональный интерфейс",
+   "function",
+   "predicate",
+   "filter",
+   "map",
+   "collect",
+   "groupingby",
+   "ссылка на метод"
+  ]
+ },
+ {
+  "t": "Виртуальные потоки (JDK 21)",
+  "u": "guides/virtual-threads.html",
+  "s": "Руководства",
+  "d": "Виртуальные потоки JDK 21 (Project Loom, JEP 444): как устроены, Thread.ofVirtual, newVirtualThreadPerTaskExecutor, отличия от пулов, pinning, structured concurrency.",
+  "k": [
+   "виртуальные потоки",
+   "virtual threads",
+   "loom",
+   "jep 444",
+   "concurrency",
+   "многопоточность",
+   "executor",
+   "carrier thread",
+   "pinning",
+   "structured concurrency",
+   "jdk 21"
+  ]
+ },
+ {
+  "t": "Справочник API: обзор",
+  "u": "api/index.html",
+  "s": "Справочник API",
+  "d": "Стандартная библиотека Java (java.base): обзор пакетов java.lang, java.util, java.time, java.io, java.nio, java.net.http, java.util.concurrent.",
+  "k": [
+   "api",
+   "java.lang",
+   "java.util",
+   "пакеты",
+   "стандартная библиотека",
+   "javadoc",
+   "java.time",
+   "nio"
+  ]
+ },
+ {
+  "t": "String и java.lang",
+  "u": "api/string.html",
+  "s": "Справочник API",
+  "d": "Класс String: неизменяемость, пул строк, основные методы, StringBuilder, текстовые блоки, сравнение equals и compareTo.",
+  "k": [
+   "string",
+   "строка",
+   "immutable",
+   "неизменяемость",
+   "stringbuilder",
+   "текстовый блок",
+   "equals",
+   "substring",
+   "split",
+   "join",
+   "форматирование",
+   "java.lang"
+  ]
+ },
+ {
+  "t": "Массивы и java.util.Arrays",
+  "u": "api/arrays.html",
+  "s": "Справочник API",
+  "d": "Массивы в Java: объявление, инициализация, обход, многомерные массивы, утилиты Arrays — sort, binarySearch, copyOf, toString, stream.",
+  "k": [
+   "массив",
+   "array",
+   "arrays",
+   "sort",
+   "binarysearch",
+   "copyof",
+   "multidimensional",
+   "двумерный массив",
+   "stream"
+  ]
+ },
+ {
+  "t": "java.util.concurrent",
+  "u": "api/concurrency.html",
+  "s": "Справочник API",
+  "d": "Многопоточность Java: Thread, Runnable, ExecutorService, CompletableFuture, synchronized, volatile, атомики, конкурентные коллекции, виртуальные потоки.",
+  "k": [
+   "concurrency",
+   "многопоточность",
+   "thread",
+   "runnable",
+   "executorservice",
+   "completablefuture",
+   "synchronized",
+   "volatile",
+   "atomic",
+   "concurrenthashmap",
+   "future",
+   "семафор"
+  ]
+ },
+ {
+  "t": "Примеры программ",
+  "u": "examples/index.html",
+  "s": "Примеры",
+  "d": "Два законченных примера на Java 21: консольное банковское приложение (ООП + коллекции) и HTTP-сервер без зависимостей на виртуальных потоках.",
+  "k": [
+   "примеры",
+   "projects",
+   "банковское приложение",
+   "http сервер",
+   "jdk 21",
+   "virtual threads"
+  ]
+ },
+ {
+  "t": "Пример 1: Банковские счета",
+  "u": "examples/example-1.html",
+  "s": "Примеры",
+  "d": "Консольное приложение «Банк» на Java 21: классы и record, HashMap, исключения, текстовые блоки, switch-меню, отчёты на Stream API.",
+  "k": [
+   "пример",
+   "банк",
+   "консольное приложение",
+   "scanner",
+   "map",
+   "исключения",
+   "stream api",
+   "switch"
+  ]
+ },
+ {
+  "t": "Пример 2: HTTP-сервер на JDK 21",
+  "u": "examples/example-2.html",
+  "s": "Примеры",
+  "d": "JSON HTTP-сервер на чистом JDK 21 без зависимостей: com.sun.net.httpserver.HttpServer, виртуальные потоки, обработка GET/POST, java.net.http клиент.",
+  "k": [
+   "http сервер",
+   "com.sun.net.httpserver",
+   "json",
+   "rest api",
+   "виртуальные потоки",
+   "jdk 21",
+   "http client",
+   "без зависимостей"
+  ]
+ }
+]

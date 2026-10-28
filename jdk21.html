@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что нового в JDK 21 — JavaDocs 21</title>
+<meta name="description" content="Все значимые возможности JDK 21 LTS: виртуальные потоки, паттерны записей, pattern matching для switch, sequenced collections, поколенческий ZGC.">
+<meta name="docs-root" content="">
+
+<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/docs.css">
+<link rel="stylesheet" href="assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <a class="logo" href="index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+  <div class="searchbox">
+    <input id="search-input" type="search" placeholder="Поиск по документации…  ( / )" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group"><div class="nav-group-title">Введение</div><a class="nav-link" href="index.html">Обзор</a><a class="nav-link current" aria-current="page" href="jdk21.html">JDK 21: обзор</a><a class="nav-link" href="changelog.html">История версий</a><a class="nav-link" href="faq.html">FAQ</a></div><div class="nav-group"><div class="nav-group-title">Начало работы</div><a class="nav-link" href="getting-started/index.html">Установка</a><a class="nav-link" href="getting-started/configuration.html">Настройка</a><a class="nav-link" href="getting-started/first-steps.html">Первые шаги</a></div><div class="nav-group"><div class="nav-group-title">Руководства</div><a class="nav-link" href="guides/index.html">Обзор руководств</a><a class="nav-link" href="guides/syntax-basics.html">Синтаксис</a><a class="nav-link" href="guides/oop.html">ООП</a><a class="nav-link" href="guides/collections.html">Коллекции</a><a class="nav-link" href="guides/streams-lambda.html">Stream API</a><a class="nav-link" href="guides/virtual-threads.html">Виртуальные потоки</a></div><div class="nav-group"><div class="nav-group-title">Справочник API</div><a class="nav-link" href="api/index.html">Обзор API</a><a class="nav-link" href="api/string.html">String / java.lang</a><a class="nav-link" href="api/arrays.html">Массивы</a><a class="nav-link" href="api/concurrency.html">Concurrency API</a></div><div class="nav-group"><div class="nav-group-title">Примеры</div><a class="nav-link" href="examples/index.html">Обзор примеров</a><a class="nav-link" href="examples/example-1.html">Банк (консоль)</a><a class="nav-link" href="examples/example-2.html">HTTP-сервер</a></div>
+    <div class="sidebar-note">Учебный проект «Документация языка Java&nbsp;21» для лабораторных работ по&nbsp;CDN (Cloudflare + GitHub&nbsp;Pages).</div>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumbs"><a href="index.html">Главная</a><span class="sep">/</span>Введение<span class="sep">/</span>Что нового в JDK 21</nav>
+    <h1>Что нового в JDK 21</h1>
+    <p class="subtitle">Релиз от 19 сентября 2023 года · LTS · 15 JEP'ов</p>
+    <p>JDK 21 — второй LTS-релиз после перехода на полугодовой цикл (предыдущие LTS: 8, 11, 17). Это один из самых «плотных» релизов за годы: виртуальные потоки вышли из инкубатора, <code>switch</code> научился сопоставлению с образцом, а коллекции получили единый порядок обхода.</p>
+<h2>Финальные возможности</h2>
+<h3>Виртуальные потоки (JEP 444)</h3>
+<p>Главное событие релиза. Виртуальный поток — поток JVM, который не привязан 1:1 к потоку ОС: при блокирующей операции он «отсоединяется» от носителя (carrier thread), освобождая его для других задач. Подробный разбор — в <a href="guides/virtual-threads.html">руководстве по виртуальным потокам</a>.</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="cm">// Один виртуальный поток на задачу — можно создать хоть миллион</span>
+<span class="kw">try</span> (<span class="kw">var</span> executor = <span class="ty">Executors</span>.<span class="fn">newVirtualThreadPerTaskExecutor</span>()) {
+    <span class="ty">IntStream</span>.<span class="fn">range</span>(<span class="nu">0</span>, <span class="nu">100_000</span>).<span class="fn">forEach</span>(i -&gt;
+        executor.<span class="fn">submit</span>(() -&gt; {
+            <span class="ty">Thread</span>.<span class="fn">sleep</span>(<span class="ty">Duration</span>.<span class="fn">ofSeconds</span>(<span class="nu">1</span>));  <span class="cm">// блокировка не занимает поток ОС</span>
+            <span class="kw">return</span> i;
+        })
+    );
+}</code></pre></div>
+<h3>Паттерны записей (JEP 440)</h3>
+<p><code>record</code> можно деконструировать прямо в <code>instanceof</code> и <code>switch</code> — как кортежи в других языках:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">record</span> <span class="ty">Point</span>(<span class="kw">int</span> x, <span class="kw">int</span> y) {}
+<span class="kw">record</span> <span class="ty">Line</span>(<span class="ty">Point</span> start, <span class="ty">Point</span> end) {}
+
+<span class="cm">// Деконструкция с вложенными паттернами</span>
+<span class="kw">if</span> (obj <span class="kw">instanceof</span> <span class="ty">Line</span>(<span class="ty">Point</span>(<span class="kw">var</span> x1, <span class="kw">var</span> y1), <span class="ty">Point</span>(<span class="kw">var</span> x2, <span class="kw">var</span> y2))) {
+    <span class="kw">double</span> len = <span class="ty">Math</span>.<span class="fn">hypot</span>(x2 - x1, y2 - y1);
+}</code></pre></div>
+<h3>Сопоставление с образцом для switch (JEP 441)</h3>
+<p><code>switch</code> теперь полноценное выражение сопоставления: по типам, с защитными условиями <code>when</code> и веткой <code>case null</code>:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="kw">static</span> <span class="ty">String</span> <span class="fn">describe</span>(<span class="ty">Object</span> obj) {
+    <span class="kw">return</span> <span class="kw">switch</span> (obj) {
+        <span class="kw">case</span> <span class="ty">Integer</span> i when i &gt; <span class="nu">100</span> -&gt; <span class="st">&quot;большое целое: &quot;</span> + i;
+        <span class="kw">case</span> <span class="ty">Integer</span> i            -&gt; <span class="st">&quot;целое: &quot;</span> + i;
+        <span class="kw">case</span> <span class="ty">String</span> s             -&gt; <span class="st">&quot;строка длиной &quot;</span> + s.<span class="fn">length</span>();
+        <span class="kw">case</span> <span class="ty">Point</span>(<span class="kw">int</span> x, <span class="kw">int</span> y)  -&gt; <span class="st">&quot;точка (%d, %d)&quot;</span>.<span class="fn">formatted</span>(x, y);
+        <span class="kw">case</span> <span class="li">null</span>                 -&gt; <span class="st">&quot;это null&quot;</span>;
+        <span class="kw">default</span>                   -&gt; <span class="st">&quot;другой тип: &quot;</span> + obj.<span class="fn">getClass</span>().<span class="fn">getSimpleName</span>();
+    };
+}</code></pre></div>
+<h3>Последовательные коллекции (JEP 431)</h3>
+<p>Новые интерфейсы <code>SequencedCollection</code>, <code>SequencedSet</code> и <code>SequencedMap</code> унифицируют работу с началом и концом любой упорядоченной коллекции:</p>
+<div class="code-block" data-lang="java"><span class="code-lang">java</span><pre><code><span class="ty">SequencedCollection</span>&lt;<span class="ty">String</span>&gt; seq = <span class="kw">new</span> <span class="ty">LinkedHashSet</span>&lt;&gt;();
+seq.<span class="fn">addFirst</span>(<span class="st">&quot;первый&quot;</span>);
+seq.<span class="fn">addLast</span>(<span class="st">&quot;последний&quot;</span>);
+<span class="ty">String</span> first = seq.<span class="fn">getFirst</span>();     <span class="cm">// было: iterator().next()</span>
+<span class="ty">String</span> last  = seq.<span class="fn">getLast</span>();      <span class="cm">// было: боль и страдания</span>
+<span class="kw">var</span> reversed = seq.<span class="fn">reversed</span>();     <span class="cm">// представление в обратном порядке</span></code></pre></div>
+<h3>Поколенческий ZGC (JEP 439)</h3>
+<p>Сборщик мусора ZGC (паузы < 1 мс) стал поколенческим: <code>-XX:+UseZGC -XX:+ZGenerational</code>. Молодое поколение собирается отдельно и чаще — выше пропускная способность, меньше расход памяти.</p>
+<h3>KEM API (JEP 452)</h3>
+<p>Новый криптографический API <code>javax.crypto.KEM</code> для алгоритмов инкапсуляции ключей — подготовка к постквантовой криптографии.</p>
+<h2>Преviews (требуют <code>--enable-preview</code>)</h2>
+<div class="table-wrap"><table><thead><tr><th>JEP</th><th>Возможность</th><th>Суть</th></tr></thead><tbody><tr><td>430</td><td>String Templates</td><td>Интерполяция строк: <code>STR.&quot;Привет, \{name}!&quot;</code> — в JDK 23 снята с рассмотрения для переработки дизайна</td></tr><tr><td>443</td><td>Unnamed Patterns and Variables</td><td>Пропуск ненужных компонентов: <code>case Point(int x, _)</code>, <code>try (var _ = lock())</code></td></tr><tr><td>445</td><td>Unnamed Classes and Instance Main</td><td>Учебный «лёгкий вход»: <code>void main() { IO.println(&quot;Hello&quot;); }</code> без класса и <code>static</code></td></tr><tr><td>446</td><td>Scoped Values</td><td>Замена <code>ThreadLocal</code> для виртуальных потоков: неизменяемый контекст с ограниченным временем жизни</td></tr><tr><td>453</td><td>Structured Concurrency</td><td>Группировка связанных задач в единицу работы: <code>StructuredTaskScope.ShutdownOnFailure()</code></td></tr></tbody></table></div>
+<div class="code-block" data-lang="bash"><span class="code-lang">bash</span><pre><code><span class="cm"># Компиляция и запуск preview-возможностей</span>
+<span class="fn">javac</span> <span class="nu">--release</span> 21 <span class="nu">--enable-preview</span> Main.java
+<span class="fn">java</span> <span class="nu">--enable-preview</span> Main</code></pre></div>
+<h2>Прочие изменения</h2>
+<ul><li>JEP 449 — устаревание 32-битного порта Windows x86.</li><li>JEP 451 — предупреждение об использовании агентов (<code>-javaagent</code>) без явного разрешения.</li><li>JEP 446/447 — улучшение инкапсуляции и производительности при работе с <code>sun.misc.Unsafe</code> (постепенная миграция на VarHandle/MemorySegment).</li><li>Обновления безопасности и сотни исправлений — см. <a href="https://bugs.openjdk.org/issues/?jql=fixVersion%20%3D%2021" rel="noopener">OpenJDK issue tracker</a>.</li></ul>
+<div class="box tip"><div class="box-title">💡 Совет</div>Если вы стартуете сегодня — ставьте именно JDK 21 (или новее LTS): бесплатная поддержка Temurin/Corretto для 21 LTS длится годы, а весь современный код (виртуальные потоки, паттерны) уже стабилен.</div>
+    <nav class="pagenav"><a class="prev" href="index.html"><span class="pn-dir">← Назад</span><span class="pn-title">Обзор</span></a><a class="next" href="changelog.html"><span class="pn-dir">Вперёд →</span><span class="pn-title">История версий</span></a></nav>
+    <footer class="footer">
+      <span>© 2026 JavaDocs 21 · Справочник по Java (JDK 21 LTS)</span>
+      <span>Статический сайт · Доставляется через CDN Cloudflare</span>
+    </footer>
+  </main>
+</div>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/copy-code.js"></script>
+<script src="assets/js/search.js"></script>
+</body>
+</html>

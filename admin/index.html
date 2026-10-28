@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Панель администратора (учебная) — JavaDocs 21</title>
+<meta name="docs-root" content="../">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/docs.css">
+<link rel="stylesheet" href="../assets/css/syntax-highlight.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="../index.html"><svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 24h30v14a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12V24Z" fill="#5382a1"/><path d="M44 27h5a7 7 0 0 1 0 14h-5" stroke="#5382a1" stroke-width="4" fill="none"/><rect x="8" y="54" width="42" height="4" rx="2" fill="#f89820"/><path d="M22 6c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4c0 4 4 5 4 9s-4 5-4 9" stroke="#f89820" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg><span class="logo-text">Java<span class="logo-accent">Docs</span></span><span class="ver">JDK 21</span></a>
+</header>
+<div class="layout">
+  <main class="content" style="margin-left:0">
+    <h1>Панель администратора (учебная)</h1>
+    <div class="box warn"><div class="box-title">⚠️ Внимание</div>⛔ <strong>Это учебная страница</strong> для лабораторных работ 3.1 и 3.4 «Защита от кибератак». Она имитирует админ-панель, которую в реальной жизни нужно защищать правилами WAF. Никаких настоящих данных и функций здесь нет.</div>
+<p>Если вы видите эту страницу — значит правило Cloudflare WAF «Блокировка админки» <strong>выключено</strong> или вы зашли с доверенного IP. После включения правила запросы к <code>/admin/</code> должны отбиваться с кодом <strong>403 Forbidden</strong> ещё на границе сети (Edge), не доходя до Origin-сервера.</p>
+<h2>Форма входа (имитация)</h2>
+
+<form class="fake-login" action="/admin/" method="post" onsubmit="return false;"
+      style="max-width:360px;border:1px solid var(--border);border-radius:10px;padding:20px;background:var(--bg-soft)">
+  <div style="margin-bottom:12px">
+    <label for="login" style="display:block;font-size:14px;font-weight:600;margin-bottom:4px">Логин</label>
+    <input id="login" name="login" type="text" autocomplete="off"
+           style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font:inherit">
+  </div>
+  <div style="margin-bottom:16px">
+    <label for="password" style="display:block;font-size:14px;font-weight:600;margin-bottom:4px">Пароль</label>
+    <input id="password" name="password" type="password"
+           style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font:inherit">
+  </div>
+  <button type="submit"
+          style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 22px;font:inherit;font-weight:600;cursor:pointer">
+    Войти
+  </button>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:12px">
+    Форма никуда не отправляет данные. Она нужна, чтобы демонстрировать Rate Limiting:
+    нажмите «Войти» несколько раз и посмотрите срабатывание правила в Cloudflare.
+  </p>
+</form>
+
+<h2>Как это используется в лабораторных</h2>
+<ol><li><strong>ЛР 3.1, шаг 2</strong> — правило WAF: <code>URI Path contains &quot;/admin&quot;</code> → действие <strong>Block</strong>. Проверка: <code>curl -I https://ВАШ-ДОМЕН/admin/</code> должен вернуть <code>403</code>.</li><li><strong>ЛР 3.4, часть 2</strong> — правило «Защита админки по IP»: доступ разрешён только доверенным IP, остальные получают 403.</li><li><strong>ЛР 3.4, часть 3</strong> — Rate Limiting на POST-запросы к этой странице (имитация защиты от брутфорса).</li><li><strong>Security → Events</strong> — все срабатывания правил видны в журнале событий Cloudflare.</li></ol>
+    <p><a href="../index.html">← Вернуться на главную</a></p>
+    <footer class="footer"><span>© 2026 JavaDocs 21</span></footer>
+  </main>
+</div>
+<script src="../assets/js/copy-code.js"></script>
+</body>
+</html>
